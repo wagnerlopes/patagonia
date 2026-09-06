@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mapa com Informações Extras</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+  <!-- CSS do Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 500px;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h3>Buscar Localidade</h3>
+    <label for="localId">ID da Localidade:</label>
+    <input type="text" id="localId" placeholder="Digite o ID">
+    <button onclick="carregarLocal()">Buscar</button>
+
+  <h3>Mapa com múltiplas informações</h3>
+    <div id="map"></div>
+
+  <!-- JS do Leaflet -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <script>
+  var map;
+  
+  window.addEventListener('load', function() {
+  
+    // Lista de locais com informações extras
+    const locais = [
+      {
+        nome: "Itupeva",
+        coords: [-23.15340963, -47.05570115],
+        descricao: "Cidade das Frutas.",
+		populacao: "73.345 hab"
+      },
+      {
+        nome: "Brasília",
+        coords: [-15.79408736, -47.88790548],
+        descricao: "Reconhecida por planejamento urbano e áreas verdes.",
+		populacao: "3.123.345 hab"
+      }
+    ];
+
+    // Inicializa o mapa
+    map = L.map('map').setView(locais[0].coords, 6);
+
+    // Camadas de tiles
+    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19
+    });
+
+    const cartoLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OSM & © CARTO',
+      subdomains: 'abcd',
+      maxZoom: 20
+    });
+
+    const stamenWatercolor = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg', {
+      attribution: 'Map tiles by Stamen Design, © OSM',
+      maxZoom: 16
+    });
+
+    const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles © Esri, USGS, NOAA',
+      maxZoom: 19
+    });
+
+    // Adiciona camada padrão (OSM)
+    osm.addTo(map);
+
+    // Camadas extras
+    var marcadorSP = L.marker([-23.15340963, -47.05570115]).bindPopup("Itupeva - ponto inicial");
+    var marcadorRJ = L.marker([-22.9068, -43.1729]).bindPopup("Rio de Janeiro");
+
+    var rota = L.polyline([
+      [-23.15340963, -47.05570115],
+      [-22.9068, -43.1729]
+    ], {color: 'red'}).bindPopup("Rota Itupeva → RJ");
+
+    // Agrupando extras
+    var overlayMaps = {
+      "Marcador SP": marcadorSP,
+      "Marcador RJ": marcadorRJ,
+      "Rota SP-RJ": rota
+    };
+	
+    // Controle de camadas
+    var baseMaps = {
+      "OpenStreetMap": osm,
+      "Carto Light": cartoLight,
+      "Stamen Watercolor": stamenWatercolor,
+      "Esri Satélite": esriSat
+    };
+
+    L.control.layers(baseMaps, overlayMaps).addTo(map);
+	
+	// Adiciona extras por padrão
+    marcadorSP.addTo(map);
+    marcadorRJ.addTo(map);
+    rota.addTo(map);
+	
+    // Adiciona marcadores com informações extras
+    locais.forEach(function(local) {
+      L.marker(local.coords)
+	    .addTo(map)
+		.bindPopup("<b>" + local.nome + "</b><br>" + local.descricao + "</b><br>" + local.populacao);
+    });
+
+  });
+	 
+  // Chamada da api remota
+  async function buscarLocal(id) {
+    try {
+      const response = await fetch(`http://localhost/babilonia/api/v1/localidade/id?id=${id}`);
+      if (!response.ok) {
+        throw new Error("Erro na requisição: " + response.status);
+      }
+	  
+      const data = await response.json();
+
+      const local = { 
+        nome: data.properties.localidade,
+        coords: [data.geometry.coordinates[0], data.geometry.coordinates[1]], // Leaflet espera [lat, lon]
+        municipio: data.properties.municipio,
+        distrito: data.properties.distrito,
+        microrregiao: data.properties.microrregiao,
+        mesorregiao: data.properties.mesorregiao,
+        uf: data.properties.uf
+      };
+
+      return local;
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+      return null;
+    }
+  }
+  
+  // Função chamada ao clicar no botão
+    async function carregarLocal() {
+      const id = document.getElementById("localId").value;
+      const local = await buscarLocal(id);
+      if (local) {
+        // Centraliza no ponto
+        map.setView(local.coords, 6);
+
+        // Adiciona marcador
+        L.marker(local.coords)
+          .addTo(map)
+          .bindPopup(`<b>Localidade: ${local.nome}</b><br>Município: ${local.municipio} - ${local.uf}<br>Distrito: ${local.distrito}<br>Microrregião: ${local.microrregiao}<br>Mesorregião: ${local.mesorregiao}`)
+          .openPopup();
+      }
+	}
+  </script>
+  
+</body>
+
+</html>

@@ -1,0 +1,65 @@
+debug: false
+
+logging:
+    
+  level:
+    org.springframework: WARN
+    br.com.wagnersoft.patagonia: INFO
+
+management:
+    endpoints:
+        web:
+          exposure:
+            include: mappings,health,info
+    endpoint:
+        mappings:
+          enabled: true
+
+server:
+
+  port: 80
+
+  http2:
+    enabled: true
+
+  servlet:
+    context-path: /patagonia
+    compression:
+      enabled: true
+      min-response-size: 1KB
+        
+  ssl:
+    enabled: false
+    key-store: "" #wagnerstore.p12
+    key-store-password: "" #123
+    #keyStoreType: PKCS12
+    #keyAlias: macedonia
+
+spring:
+
+  application:
+    name: patagonia
+
+  profiles:
+    active: dev
+ 
+  mvc:
+    locale: pt_BR
+    messages:
+      basename: messages
+    format:
+      date: yyyy-MM-dd
+    pathmatch:
+      matching-strategy: path-pattern-parser
+
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    
+#  jackson:
+#    default-property-inclusion: NON_NULL
+
+app:
+    map: osm
+    usr: truta
