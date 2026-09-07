@@ -1,29 +1,50 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en" data-bs-theme="auto" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-  <title>Mapa com Informações Extras</title>
+
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
-  <!-- CSS do Leaflet -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Cleint for Map Api" />
+  <meta name="author" content="Wagnersoft - WL"/>
+  <meta name="generator" content="Astro v5.13.2" />
+  <meta name="theme-color" content="#712cf9" />
+
+  <title>Patagonia · WagnerSoft v0.0.1-alpha</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"> 
+  <link rel="stylesheet" type="text/css" media="all" href="../css/patagonia.css" th:href="@{/css/patagonia.css}"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  
   <style>
     #map {
       height: 500px;
       width: 100%;
     }
   </style>
+  
 </head>
 
-<body>
+<body class="m-3">
 
   <h3>Buscar Localidade</h3>
-    <label for="localId">ID da Localidade:</label>
-    <input type="text" id="localId" placeholder="Digite o ID">
-    <button onclick="carregarLocal()">Buscar</button>
 
-  <h3>Mapa com múltiplas informações</h3>
-    <div id="map"></div>
+  <hr/>
+  
+  <div class="form-group row mt-1">
+    <label for="localId" class="col-sm-2 form-label my-1 text-end">ID da Localidade:</label>
+    <div class="col-sm-2">
+      <input type="text" class="form-control" id="localId" placeholder="Digite o ID">
+    </div>
+    <div class="col-sm-2">
+      <button class="btn btn-primary btn-small" onclick="carregarLocal()">Buscar</button>
+    </div>
+  </div>
+  
+  <hr/>
+
+  <div id="map"></div>
 
   <!-- JS do Leaflet -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>

@@ -24,12 +24,14 @@ public class GeoController {
     logger.info("+++ Index +++");
     session.setMaxInactiveInterval(0);
     session.setAttribute("usr", usr);
+    model.addAttribute("menu", "index");
     return "index";
   }
 
   @GetMapping("/geo")
-  public String showBanner(Model model) {
-    model.addAttribute("geo", "xxx");
+  public String geoMap(Model model) {
+    logger.info("+++ Geo +++");
+    model.addAttribute("menu", "geo");
     return "geo";
   }
 
