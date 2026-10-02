@@ -17,7 +17,7 @@ management:
 
 server:
 
-  port: 80
+  port: 8080
 
   http2:
     enabled: true
