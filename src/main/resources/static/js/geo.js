@@ -93,7 +93,12 @@ const map_init = () => {
 // Chamada da api remota
 async function buscarLocal(id) {
   try {
-    const response = await fetch(`http://localhost/babilonia/api/v1/localidade/id?id=${id}`);
+    const response = await fetch(`https://localhost/babilonia/api/v1/localidade/id?id=${id}`, {
+      method: "GET",
+      headers: {
+        "x-api-key": "3f6988fd-feff-477a-9772-c2ceefda3b39"
+      }   
+    });
     if (!response.ok) {
       throw new Error("Erro na requisição: " + response.status);
     }
