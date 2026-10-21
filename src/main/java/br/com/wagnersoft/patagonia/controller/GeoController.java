@@ -1,4 +1,4 @@
-package br.com.wagnersoft.patagonia;
+package br.com.wagnersoft.patagonia.controller;
 
 import java.io.IOException;
 
