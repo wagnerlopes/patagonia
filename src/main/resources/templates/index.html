@@ -19,7 +19,7 @@
 
   <body class="m-5">
 
-    <h2>Patagônia - Geo Map API</h2>
+    <h2>Patagônia - Geo Map</h2>
     
     <hr/>
     
@@ -29,6 +29,31 @@
 
     <p>(Experimental)</p>
 
+    <hr/>
+    
+    <div class="form-group row mt-1">
+    
+    <label for="origemId" class="col-sm-2 form-label my-1 text-end">ID da Origem:</label>
+    <div class="col-sm-2">
+      <input type="text" class="form-control" id="origemId" placeholder="Digite o ID">
+    </div>
+
+    <label for="destinoId" class="col-sm-2 form-label my-1 text-end">ID do Destino:</label>
+    <div class="col-sm-2">
+      <input type="text" class="form-control" id="destinoId" placeholder="Digite o ID">
+    </div>
+
+    <div class="col-sm-2">
+      <button class="btn btn-primary btn-small" id="btCalc">Calcular</button>
+    </div>
+
+    <div class="col-sm-12" id="resultId">
+    </div>
+
+  </div>
+
+  <script src="../js/index.js" th:src="@{/js/index.js}" ></script>
+    
   </body>
 
 </html>
