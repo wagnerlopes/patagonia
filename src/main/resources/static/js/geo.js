@@ -2,6 +2,14 @@
  * Geo Map
  */
 
+window.onload = function() {
+
+  document.getElementById('btSearch').addEventListener('click', (e) => {
+    console.log(e);
+  });
+
+}
+
 const map_init = () => {
   // Lista de locais com informações extras
   const locais = [
