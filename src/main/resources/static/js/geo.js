@@ -6,6 +6,8 @@
 
 let map;
 
+let layerLocais;
+
 window.addEventListener('load', () => map = map_init());
 
 
@@ -27,6 +29,10 @@ window.onload = function() {
     calcularDistancia(map);
   });
 
+  document.getElementById('btLimpar').addEventListener('click', (e) => {
+    layerLocais.clearLayers();
+  });
+	
   // adiciona evento de clique no mapa
   map.on('click', function(e) {
     const lat = e.latlng.lat;
@@ -38,7 +44,7 @@ window.onload = function() {
     // opcional: criar marcador no ponto clicado
     L.marker([lat, lng])
       .bindPopup(`Coordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`)
-      .addTo(map)
+      .addTo(layerLocais)
       .openPopup();
   });
 
@@ -49,22 +55,29 @@ const map_init = () => {
 	
   // Lista de locais de exemplo
   const locais_array = [
+	{
+	  nome: "Brasília",
+	  coords: [-15.79408736, -47.88790548],
+	  descricao: "Reconhecida por planejamento urbano e áreas verdes.",
+	  populacao: "3.123.345 hab"
+	},
     {
       nome: "Itupeva",
       coords: [-23.15340963, -47.05570115],
-      descricao: "Cidade das Frutas.",
+      descricao: "Cidade da Rota das Frutas.",
       populacao: "73.345 hab"
     },
-    {
-      nome: "Brasília",
-      coords: [-15.79408736, -47.88790548],
-      descricao: "Reconhecida por planejamento urbano e áreas verdes.",
-      populacao: "3.123.345 hab"
-    }
+	{
+	  nome: "Estação Geodésica 93792",
+	  coords: [-23.2361132578, -46.8739280342],
+	  descricao: "ETEVAV",
+	  populacao: "SIRGAS2000"
+	}
+	
   ];
 
   // Inicializa o mapa
-  const map = L.map('map').setView(locais_array[0].coords, 6);
+  const map = L.map('map').setView(locais_array[0].coords, 5);
 
   // Camadas de tiles
   const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -94,8 +107,8 @@ const map_init = () => {
   osm.addTo(map);
 
   // Camadas extras
-  const marcadorDF = L.marker([-15.79408736, -47.88790548]).bindPopup("Brasília");
-  const marcadorSP = L.marker([-23.15340963, -47.05570115]).bindPopup("Itupeva");
+  const marcadorDF = L.marker(locais_array[0].coords).bindPopup(locais_array[0].nome);
+  const marcadorSP = L.marker(locais_array[1].coords).bindPopup(locais_array[1].nome);
   const rota = L.polyline([marcadorDF.getLatLng(), marcadorSP.getLatLng()], {color: 'red'}).bindPopup("Rota Brasília → Itupeva");
 
   // Agrupando extras
@@ -126,6 +139,9 @@ const map_init = () => {
     metric: true            // ativa metros/km
   }).addTo(map);
 
+  // cria um grupo de camadas
+  layerLocais = L.layerGroup().addTo(map);
+    
   return map;
 
 };
@@ -172,7 +188,7 @@ async function carregarLocal(id, map) {
 
     // Adiciona marcador
     L.marker(local.coords)
-      .addTo(map)
+      .addTo(layerLocais)
       .bindPopup(`<b>Localidade: ${local.nome}</b><br>Município: ${local.municipio} - ${local.uf}<br>Distrito: ${local.distrito}<br>Microrregião: ${local.microrregiao}<br>Mesorregião: ${local.mesorregiao}`);
   }
 }
@@ -209,7 +225,7 @@ async function calcularDistancia(map) {
     if (data) {
         const info = `<ul><li>Origem: ${data.origem}<li>Destino: ${data.destino}<li>Distância: ${data.distancia.toLocaleString('pt-BR')} ${data.unidade}`
 		const rota = L.polyline([origem.coords, destino.coords], {color: 'red'}).bindPopup(info);
-		rota.addTo(map);
+		rota.addTo(layerLocais);
 		map.fitBounds(rota.getBounds());
 		rota.openPopup();
   }
