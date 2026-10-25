@@ -2,10 +2,16 @@
  * Geo Map
  */
 
-window.onload = function() {
+let map;
 
+window.addEventListener('load', () => map = map_init());
+
+window.onload = function() {
+	
   document.getElementById('btSearch').addEventListener('click', (e) => {
-    console.log(e);
+	const id = document.getElementById("localId").value;
+    console.log("Local (ID) = " + id);
+	carregarLocal(id, map);
   });
 
 }
@@ -130,10 +136,10 @@ async function buscarLocal(id) {
   }
 }
 
-// Função chamada ao clicar no botão
-async function carregarLocal(map) {
-  const id = document.getElementById("localId").value;
+// Função chamada ao clicar no botão search
+async function carregarLocal(id, map) {
   const local = await buscarLocal(id);
+  console.log(local);
   if (local) {
     // Centraliza no ponto
     map.setView(local.coords, 6);

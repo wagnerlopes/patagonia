@@ -6,7 +6,7 @@
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Cleint for Map Api" />
+  <meta name="description" content="Client for Map Api" />
   <meta name="author" content="Wagnersoft - WL"/>
   <meta name="generator" content="Astro v5.13.2" />
   <meta name="theme-color" content="#712cf9" />
@@ -33,9 +33,9 @@
   <hr/>
   
   <div class="form-group row mt-1">
-    <label for="localId" class="col-sm-2 form-label my-1 text-end">ID da Localidade:</label>
+    <label for="localId" class="col-sm-2 form-label my-1 text-end">Localidade (ID):</label>
     <div class="col-sm-2">
-      <input type="text" class="form-control" id="localId" placeholder="Digite o ID">
+      <input type="text" class="form-control" id="localId" placeholder="digite o id">
     </div>
     <div class="col-sm-2">
       <button class="btn btn-primary btn-small" onclick="carregarLocal(map)" id="btSearch">Buscar</button>
@@ -50,11 +50,6 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="../js/geo.js" th:src="@{/js/geo.js}" ></script>
 
-  <script>
-    let map;
-    window.addEventListener('load', () => map = map_init());
-  </script>
-  
 </body>
 
 </html>
