@@ -1,24 +1,54 @@
-/**
- * Geo Map
- */
+/******************************
+ * Geo Map - Inicializa o Mapa
+ * - Configura os botoes
+ * - Chama info na API remota 
+ ******************************/
 
 let map;
 
 window.addEventListener('load', () => map = map_init());
 
+
 window.onload = function() {
 	
   document.getElementById('btSearch').addEventListener('click', (e) => {
-	const id = document.getElementById("localId").value;
-    console.log("Local (ID) = " + id);
+	const id = document.getElementById("origemId").value;
+    console.log("Origem (ID) = " + id);
 	carregarLocal(id, map);
+  });
+
+  document.getElementById('btSearch2').addEventListener('click', (e) => {
+  const id = document.getElementById("destinoId").value;
+    console.log("Destino (ID) = " + id);
+  carregarLocal(id, map);
+  });
+
+  document.getElementById('btCalc').addEventListener('click', (e) => {
+    calcularDistancia(map);
+  });
+
+  // adiciona evento de clique no mapa
+  map.on('click', function(e) {
+    const lat = e.latlng.lat;
+    const lng = e.latlng.lng;
+
+    // mostra no console
+    console.log("Coordenadas clicadas:", lat, lng);
+
+    // opcional: criar marcador no ponto clicado
+    L.marker([lat, lng])
+      .bindPopup(`Coordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`)
+      .addTo(map)
+      .openPopup();
   });
 
 }
 
+// Inicializa o Mapa
 const map_init = () => {
-  // Lista de locais com informações extras
-  const locais = [
+	
+  // Lista de locais de exemplo
+  const locais_array = [
     {
       nome: "Itupeva",
       coords: [-23.15340963, -47.05570115],
@@ -34,7 +64,7 @@ const map_init = () => {
   ];
 
   // Inicializa o mapa
-  const map = L.map('map').setView(locais[0].coords, 6);
+  const map = L.map('map').setView(locais_array[0].coords, 6);
 
   // Camadas de tiles
   const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -53,58 +83,54 @@ const map_init = () => {
     maxZoom: 19
   });
 
-  // Adiciona camada padrão (OSM)
-  osm.addTo(map);
-
-  // Camadas extras
-  const marcadorSP = L.marker([-23.15340963, -47.05570115]).bindPopup("Itupeva - ponto inicial");
-  const marcadorRJ = L.marker([-22.9068, -43.1729]).bindPopup("Rio de Janeiro");
-
-  const rota = L.polyline([
-    [-23.15340963, -47.05570115],
-    [-22.9068, -43.1729]
-  ], {color: 'red'}).bindPopup("Rota Itupeva → RJ");
-
-  // Agrupando extras
-  const overlayMaps = {
-    "Marcador SP": marcadorSP,
-    "Marcador RJ": marcadorRJ,
-    "Rota SP-RJ": rota
-  };
-
   // Controle de camadas
   const baseMaps = {
     "OpenStreetMap": osm,
     "Carto Light": cartoLight,
     "Esri Satélite": esriSat
   };
+  
+  // Adiciona camada padrão (OSM)
+  osm.addTo(map);
+
+  // Camadas extras
+  const marcadorDF = L.marker([-15.79408736, -47.88790548]).bindPopup("Brasília");
+  const marcadorSP = L.marker([-23.15340963, -47.05570115]).bindPopup("Itupeva");
+  const rota = L.polyline([marcadorDF.getLatLng(), marcadorSP.getLatLng()], {color: 'red'}).bindPopup("Rota Brasília → Itupeva");
+
+  // Agrupando extras
+  const overlayMaps = {
+	"Marcador DF": marcadorDF,
+    "Marcador SP": marcadorSP,
+    "Rota DF-SP": rota
+  };
 
   L.control.layers(baseMaps, overlayMaps).addTo(map);
 
   // Adiciona extras por padrão
+  marcadorDF.addTo(map);
   marcadorSP.addTo(map);
-  marcadorRJ.addTo(map);
   rota.addTo(map);
 
   // Adiciona marcadores com informações extras
-  locais.forEach(function(local) {
+  locais_array.forEach(function(local) {
     L.marker(local.coords)
       .addTo(map)
       .bindPopup("<b>" + local.nome + "</b><br>" + local.descricao + "</b><br>" + local.populacao);
   });
 
-  // adiciona a escala
-    L.control.scale({
-      position: 'bottomleft', // opções: 'topleft', 'topright', 'bottomleft', 'bottomright'
-      imperial: false,        // desativa milhas/pés
-      metric: true            // ativa metros/km
-    }).addTo(map);
-    
+  // Adiciona escala
+  L.control.scale({
+    position: 'bottomleft', // opções: 'topleft', 'topright', 'bottomleft', 'bottomright'
+    imperial: false,        // desativa milhas/pés
+    metric: true            // ativa metros/km
+  }).addTo(map);
+
   return map;
 
 };
 
-// Chamada da api remota
+// Chamada assincrona da api remota localidade
 async function buscarLocal(id) {
   try {
     const response = await fetch(`https://localhost/babilonia/api/v1/localidade/id?id=${id}`, {
@@ -147,7 +173,44 @@ async function carregarLocal(id, map) {
     // Adiciona marcador
     L.marker(local.coords)
       .addTo(map)
-      .bindPopup(`<b>Localidade: ${local.nome}</b><br>Município: ${local.municipio} - ${local.uf}<br>Distrito: ${local.distrito}<br>Microrregião: ${local.microrregiao}<br>Mesorregião: ${local.mesorregiao}`)
-      .openPopup();
+      .bindPopup(`<b>Localidade: ${local.nome}</b><br>Município: ${local.municipio} - ${local.uf}<br>Distrito: ${local.distrito}<br>Microrregião: ${local.microrregiao}<br>Mesorregião: ${local.mesorregiao}`);
+  }
+}
+
+// Chamada da api remota
+async function getDistancia(origemId, destinoId) {
+  try {
+    const response = await fetch(`https://localhost/babilonia/api/v1/localidade/distancia?origem=${origemId}&destino=${destinoId}`, {
+      method: "GET",
+      headers: {
+        "x-api-key": "3f6988fd-feff-477a-9772-c2ceefda3b39"
+      }   
+    });
+    if (!response.ok) {
+      throw new Error("Erro na requisição: " + response.status);
+    }
+    
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Erro calculando distância:", error);
+    return null;
+  }
+}
+
+// Função assincrona chamada ao clicar no botão distancia
+async function calcularDistancia(map) {
+    const origemId = document.getElementById("origemId").value;
+    const destinoId = document.getElementById("destinoId").value;
+	const origem = await buscarLocal(origemId);
+	const destino = await buscarLocal(destinoId);
+    const data = await getDistancia(origemId, destinoId);
+    if (data) {
+        const info = `<ul><li>Origem: ${data.origem}<li>Destino: ${data.destino}<li>Distância: ${data.distancia.toLocaleString('pt-BR')} ${data.unidade}`
+		const rota = L.polyline([origem.coords, destino.coords], {color: 'red'}).bindPopup(info);
+		rota.addTo(map);
+		map.fitBounds(rota.getBounds());
+		rota.openPopup();
   }
 }

@@ -33,13 +33,30 @@
   <hr/>
   
   <div class="form-group row mt-1">
-    <label for="localId" class="col-sm-2 form-label my-1 text-end">Localidade (ID):</label>
-    <div class="col-sm-2">
-      <input type="text" class="form-control" id="localId" placeholder="digite o id">
+    <label for="localId" class="col-sm-2 form-label my-1 text-end">Origem (ID):</label>
+    <div class="col-sm-3">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="digite o id" id="origemId">
+        <button class="btn btn-primary" type="button" id="btSearch">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
     </div>
-    <div class="col-sm-2">
-      <button class="btn btn-primary btn-small" onclick="carregarLocal(map)" id="btSearch">Buscar</button>
+    
+    <label for="localId" class="col-sm-2 form-label my-1 text-end">Destino (ID):</label>
+    <div class="col-sm-3">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="digite o id" id="destinoId">
+        <button class="btn btn-primary" type="button" id="btSearch2">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
     </div>
+
+    <div class="col-sm-2">
+      <button class="btn btn-primary btn-small" id="btCalc">Distância</button>
+    </div>
+    
   </div>
   
   <hr/>
