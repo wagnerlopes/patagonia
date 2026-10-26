@@ -29,11 +29,11 @@ server:
       min-response-size: 1KB
         
   ssl:
-    enabled: false
-    key-store: "" #wagnerstore.p12
-    key-store-password: "" #123
-    #keyStoreType: PKCS12
-    #keyAlias: macedonia
+    enabled: true
+    key-store: classpath:wagnersoft.p12
+    key-store-password: wl1234
+    keyStoreType: PKCS12
+    keyAlias: wagnersoft
 
 spring:
 
