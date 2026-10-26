@@ -5,7 +5,6 @@
  ******************************/
 
 let map;
-
 let layerLocais;
 
 window.addEventListener('load', () => map = map_init());
@@ -13,7 +12,7 @@ window.addEventListener('load', () => map = map_init());
 
 window.onload = function() {
 	
-  document.getElementById('btSearch').addEventListener('click', (e) => {
+  document.getElementById('btSearch1').addEventListener('click', (e) => {
 	const id = document.getElementById("origemId").value;
     console.log("Origem (ID) = " + id);
 	carregarLocal(id, map);
@@ -41,7 +40,7 @@ window.onload = function() {
     // mostra no console
     console.log("Coordenadas clicadas:", lat, lng);
 
-    // opcional: criar marcador no ponto clicado
+    // criar marcador no ponto clicado
     L.marker([lat, lng])
       .bindPopup(`Coordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`)
       .addTo(layerLocais)
@@ -53,27 +52,38 @@ window.onload = function() {
 // Inicializa o Mapa
 const map_init = () => {
 	
-  // Lista de locais de exemplo
+  // Lista de locais padrão
   const locais_array = [
 	{
 	  nome: "Brasília",
 	  coords: [-15.79408736, -47.88790548],
-	  descricao: "Reconhecida por planejamento urbano e áreas verdes.",
-	  populacao: "3.123.345 hab"
+	  descricao: "Capital Federal",
+	  observacao: "Alt 1.100 m"
 	},
     {
       nome: "Itupeva",
-      coords: [-23.15340963, -47.05570115],
-      descricao: "Cidade da Rota das Frutas.",
-      populacao: "73.345 hab"
+      coords: [-23.166864,  -47.061320],
+      descricao: "Cidade da Rota das Frutas",
+      observacao: "Alt 735 m"
     },
 	{
-	  nome: "Estação Geodésica 93792",
-	  coords: [-23.2361132578, -46.8739280342],
-	  descricao: "ETEVAV",
-	  populacao: "SIRGAS2000"
+	  nome: "Estação Geodésica 93807",
+	  coords: [-23.1367396089, -47.1668108481],
+	  descricao: "Indaiatuba - Videiras",
+	  observacao: "SIRGAS2000 - Alt 637 m"
+	},
+	{
+	  nome: "Estação Geodésica 1730",
+	  coords: [-23.2446210136, -46.9411063039],
+	  descricao: "JAPI",
+	  observacao: "SIRGAS2000 - Altitude 1.216 m"
+	},
+	{
+	  nome: "Estação Geodésica 2862Z",
+	  coords: [-23.1888888889, -46.8847222222],
+	  descricao: "Catedral Nossa Senhora do Desterro",
+	  observacao: "SIRGAS2000 - Altitude 752 m"
 	}
-	
   ];
 
   // Inicializa o mapa
@@ -106,7 +116,7 @@ const map_init = () => {
   // Adiciona camada padrão (OSM)
   osm.addTo(map);
 
-  // Camadas extras
+  // Marcadores padrão e rota
   const marcadorDF = L.marker(locais_array[0].coords).bindPopup(locais_array[0].nome);
   const marcadorSP = L.marker(locais_array[1].coords).bindPopup(locais_array[1].nome);
   const rota = L.polyline([marcadorDF.getLatLng(), marcadorSP.getLatLng()], {color: 'red'}).bindPopup("Rota Brasília → Itupeva");
@@ -125,11 +135,11 @@ const map_init = () => {
   marcadorSP.addTo(map);
   rota.addTo(map);
 
-  // Adiciona marcadores com informações extras
+  // Adiciona locais padrão e suas informações
   locais_array.forEach(function(local) {
     L.marker(local.coords)
       .addTo(map)
-      .bindPopup("<b>" + local.nome + "</b><br>" + local.descricao + "</b><br>" + local.populacao);
+      .bindPopup("<b>" + local.nome + "</b><br>" + local.descricao + "</b><br>" + local.observacao);
   });
 
   // Adiciona escala
@@ -143,8 +153,42 @@ const map_init = () => {
   layerLocais = L.layerGroup().addTo(map);
     
   return map;
-
 };
+
+// Função chamada ao clicar no botão search
+async function carregarLocal(id, map) {
+  const local = await buscarLocal(id);
+  console.log(local);
+  if (local) {
+    // Centraliza no ponto
+    map.setView(local.coords, 6);
+
+    // Adiciona marcador
+    L.marker(local.coords)
+      .addTo(layerLocais)
+      .bindPopup(`<b>Localidade: ${local.nome}</b><br>Município: ${local.municipio} - ${local.uf}<br>Distrito: ${local.distrito}<br>Microrregião: ${local.microrregiao}<br>Mesorregião: ${local.mesorregiao}`);
+  }
+}
+
+// Função chamada ao clicar no botão distancia
+async function calcularDistancia(map) {
+    const origemId = document.getElementById("origemId").value;
+    const destinoId = document.getElementById("destinoId").value;
+	const origem = await buscarLocal(origemId);
+	const destino = await buscarLocal(destinoId);
+    const data = await getDistancia(origemId, destinoId);
+    if (data) {
+        const info = `<ul><li>Origem: ${data.origem}<li>Destino: ${data.destino}<li>Distância: ${data.distancia.toLocaleString('pt-BR')} ${data.unidade}`
+		const rota = L.polyline([origem.coords, destino.coords], {color: 'red'}).bindPopup(info);
+		rota.addTo(layerLocais);
+		map.fitBounds(rota.getBounds());
+		rota.openPopup();
+  }
+}
+
+/* ------------------------- */
+/* Chamadas da API Babilonia */
+/* ------------------------- */
 
 // Chamada assincrona da api remota localidade
 async function buscarLocal(id) {
@@ -173,35 +217,22 @@ async function buscarLocal(id) {
 
     return local;
   } catch (error) {
-    console.error("Erro ao buscar dados:", error);
+    console.error("Erro ao buscar localidade: ", error);
     return null;
-  }
-}
-
-// Função chamada ao clicar no botão search
-async function carregarLocal(id, map) {
-  const local = await buscarLocal(id);
-  console.log(local);
-  if (local) {
-    // Centraliza no ponto
-    map.setView(local.coords, 6);
-
-    // Adiciona marcador
-    L.marker(local.coords)
-      .addTo(layerLocais)
-      .bindPopup(`<b>Localidade: ${local.nome}</b><br>Município: ${local.municipio} - ${local.uf}<br>Distrito: ${local.distrito}<br>Microrregião: ${local.microrregiao}<br>Mesorregião: ${local.mesorregiao}`);
   }
 }
 
 // Chamada da api remota
 async function getDistancia(origemId, destinoId) {
   try {
+	
     const response = await fetch(`https://localhost/babilonia/api/v1/localidade/distancia?origem=${origemId}&destino=${destinoId}`, {
       method: "GET",
       headers: {
         "x-api-key": "3f6988fd-feff-477a-9772-c2ceefda3b39"
       }   
     });
+	
     if (!response.ok) {
       throw new Error("Erro na requisição: " + response.status);
     }
@@ -210,23 +241,7 @@ async function getDistancia(origemId, destinoId) {
     console.log(data);
     return data;
   } catch (error) {
-    console.error("Erro calculando distância:", error);
+    console.error("Erro calculando distância: ", error);
     return null;
-  }
-}
-
-// Função assincrona chamada ao clicar no botão distancia
-async function calcularDistancia(map) {
-    const origemId = document.getElementById("origemId").value;
-    const destinoId = document.getElementById("destinoId").value;
-	const origem = await buscarLocal(origemId);
-	const destino = await buscarLocal(destinoId);
-    const data = await getDistancia(origemId, destinoId);
-    if (data) {
-        const info = `<ul><li>Origem: ${data.origem}<li>Destino: ${data.destino}<li>Distância: ${data.distancia.toLocaleString('pt-BR')} ${data.unidade}`
-		const rota = L.polyline([origem.coords, destino.coords], {color: 'red'}).bindPopup(info);
-		rota.addTo(layerLocais);
-		map.fitBounds(rota.getBounds());
-		rota.openPopup();
   }
 }
