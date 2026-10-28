@@ -9,7 +9,7 @@ let layerLocais;
 
 window.addEventListener('load', () => map = map_init());
 
-
+// Associa eventos após carregar a janela
 window.onload = function() {
 	
   document.getElementById('btSearch1').addEventListener('click', (e) => {
@@ -48,13 +48,15 @@ window.onload = function() {
     // mostra no console
     console.log("Coordenadas clicadas:", lat, lng);
 
+	// Salva coordenadas anteriores
 	document.getElementById("lat2").value = document.getElementById("lat1").value;
 	document.getElementById("lon2").value = document.getElementById("lon1").value;
-	
+
+	// Coordenadas atuais do ponto clicado  	
 	document.getElementById("lat1").value = lat;
 	document.getElementById("lon1").value = lng;
 	
-    // criar marcador no ponto clicado
+    // Cria marcador no ponto clicado
     L.marker([lat, lng])
       .bindPopup(`Coordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`)
       .addTo(layerLocais)
@@ -81,33 +83,39 @@ const map_init = () => {
       observacao: "Alt 735 m"
     },
 	{
-	  nome: "Estação Geodésica 93807",
-	  coords: [-23.1367396089, -47.1668108481],
-	  descricao: "Indaiatuba - Videiras",
-	  observacao: "SIRGAS2000 - Alt 637 m"
-	},
-	{
 	  nome: "Estação Geodésica 1730",
 	  coords: [-23.2446210136, -46.9411063039],
-	  descricao: "JAPI",
+	  descricao: "Jundiaí - Serra do Japi",
 	  observacao: "SIRGAS2000 - Altitude 1.216 m"
 	},
 	{
 	  nome: "Estação Geodésica 2862Z",
 	  coords: [-23.1888888889, -46.8847222222],
-	  descricao: "Catedral Nossa Senhora do Desterro",
+	  descricao: "Jundiaí - Catedral Nossa Senhora do Desterro",
 	  observacao: "SIRGAS2000 - Altitude 752 m"
-	}
+    },
+    {
+      nome: "Estação Geodésica 93807",
+      coords: [-23.1367396089, -47.1668108481],
+      descricao: "Indaiatuba - Videiras",
+      observacao: "SIRGAS2000 - Alt 637 m"
+    },
+    {
+      nome: "Estação Geodésica 93945",
+      coords: [-23.1796478483, -47.3030324261],
+      descricao: "Salto - Jd São Gabriel",
+      observacao: "SIRGAS2000 - Altitude 558 m"
+    }
   ];
 
-  // Inicializa o mapa
+  // Centraliza mapa no ponto default
   const map = L.map('map').setView(locais_array[1].coords, 10);
 
-  // cria um grupo de camadas
+  // Cria grupo de camadas de pontos relevantes
   layerEstacoes = L.layerGroup().addTo(map);
   layerLocais = L.layerGroup().addTo(map);
   
-  // Camadas de tiles
+  // Cria as camadas de tiles do mapa
   const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors',
     maxZoom: 19
@@ -124,7 +132,7 @@ const map_init = () => {
     maxZoom: 20
   });
 
-  // Controle de camadas
+  // Controle lateral de camadas do mapa
   const baseMaps = {
     "OpenStreetMap": osm,
     "Esri Satélite": esriSat,
@@ -134,16 +142,15 @@ const map_init = () => {
   // Adiciona camada padrão (OSM)
   osm.addTo(map);
 
-  // Marcadores padrão e rota
+  // Marcadores padrão e rota entre eles
   const marcadorDF = L.marker(locais_array[0].coords).bindPopup("<b>" + locais_array[0].nome + "</b><br>" + locais_array[0].descricao + "</b><br>" + locais_array[0].observacao);
   const marcadorSP = L.marker(locais_array[1].coords).bindPopup("<b>" + locais_array[1].nome + "</b><br>" + locais_array[1].descricao + "</b><br>" + locais_array[1].observacao);
   var distanciaMetros = map.distance(locais_array[0].coords, locais_array[1].coords);
   var distanciaKm = (distanciaMetros / 1000).toFixed(1);
 
   const rota = L.polyline([marcadorDF.getLatLng(), marcadorSP.getLatLng()], {color: 'red'}).bindPopup("Rota Brasília → Itupeva " + distanciaKm + " Km");
-
   
-  // Adiciona locais padrão
+  // Adiciona marcadores padrão ao mapa
   marcadorDF.addTo(map);
   marcadorSP.addTo(map);
   rota.addTo(map);
@@ -155,7 +162,7 @@ const map_init = () => {
      .bindPopup("<b>" + local.nome + "</b><br>" + local.descricao + "</b><br>" + local.observacao);
   });
   
-  // Agrupando extras
+  // Controle lateral de pontos
   const overlayMaps = {
 	"Brasília": marcadorDF,
     "Itupeva": marcadorSP,
@@ -165,7 +172,7 @@ const map_init = () => {
 
   L.control.layers(baseMaps, overlayMaps).addTo(map);
 
-  // Adiciona escala
+  // Adiciona escala gráfica ao mapa
   L.control.scale({
     position: 'bottomleft', // opções: 'topleft', 'topright', 'bottomleft', 'bottomright'
     imperial: false,        // desativa milhas/pés
@@ -181,7 +188,7 @@ async function carregarLocal(id, map) {
   console.log(local);
   if (local) {
     // Centraliza no ponto
-    map.setView(local.coords, 6);
+    map.setView(local.coords, 10);
 
     // Adiciona marcador
     L.marker(local.coords)
@@ -207,7 +214,7 @@ async function calcularDistancia(map) {
   }
 }
 
-// Função chamada ao clicar no botão distancia local
+// Função chamada ao clicar btCalcDist (entre pontos clicados)
 async function calcularDistanciaLocal(map) {
 	const lat1 = document.getElementById("lat1").value;
 	const lon1 = document.getElementById("lon1").value;
@@ -227,7 +234,7 @@ async function calcularDistanciaLocal(map) {
 /* Chamadas da API Babilonia */
 /* ------------------------- */
 
-// Chamada assincrona da api remota localidade
+// Chamada assincrona da api remota localidade por ID
 async function buscarLocal(id) {
   try {
     const response = await fetch(`https://localhost/babilonia/api/v1/localidade/id?id=${id}`, {
@@ -259,7 +266,7 @@ async function buscarLocal(id) {
   }
 }
 
-// Chamada da api remota
+// Chamada da api remota distancia entre localidades por ID
 async function getDistancia(origemId, destinoId) {
   try {
 	
