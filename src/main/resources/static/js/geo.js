@@ -30,8 +30,16 @@ window.onload = function() {
 
   document.getElementById('btLimpar').addEventListener('click', (e) => {
     layerLocais.clearLayers();
+	document.getElementById("lat1").value = "";
+	document.getElementById("lon1").value = "";
+	document.getElementById("lat2").value = "";
+	document.getElementById("lon2").value = "";
   });
-	
+
+  document.getElementById('btCalcDist').addEventListener('click', (e) => {
+    calcularDistanciaLocal(map);
+  });
+  	
   // adiciona evento de clique no mapa
   map.on('click', function(e) {
     const lat = e.latlng.lat;
@@ -40,6 +48,12 @@ window.onload = function() {
     // mostra no console
     console.log("Coordenadas clicadas:", lat, lng);
 
+	document.getElementById("lat2").value = document.getElementById("lat1").value;
+	document.getElementById("lon2").value = document.getElementById("lon1").value;
+	
+	document.getElementById("lat1").value = lat;
+	document.getElementById("lon1").value = lng;
+	
     // criar marcador no ponto clicado
     L.marker([lat, lng])
       .bindPopup(`Coordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`)
@@ -87,11 +101,20 @@ const map_init = () => {
   ];
 
   // Inicializa o mapa
-  const map = L.map('map').setView(locais_array[0].coords, 5);
+  const map = L.map('map').setView(locais_array[1].coords, 10);
 
+  // cria um grupo de camadas
+  layerEstacoes = L.layerGroup().addTo(map);
+  layerLocais = L.layerGroup().addTo(map);
+  
   // Camadas de tiles
   const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  });
+
+  const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles © Esri, USGS, NOAA',
     maxZoom: 19
   });
 
@@ -101,46 +124,46 @@ const map_init = () => {
     maxZoom: 20
   });
 
-  const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    attribution: 'Tiles © Esri, USGS, NOAA',
-    maxZoom: 19
-  });
-
   // Controle de camadas
   const baseMaps = {
     "OpenStreetMap": osm,
-    "Carto Light": cartoLight,
-    "Esri Satélite": esriSat
+    "Esri Satélite": esriSat,
+	"Carto Light": cartoLight
   };
   
   // Adiciona camada padrão (OSM)
   osm.addTo(map);
 
   // Marcadores padrão e rota
-  const marcadorDF = L.marker(locais_array[0].coords).bindPopup(locais_array[0].nome);
-  const marcadorSP = L.marker(locais_array[1].coords).bindPopup(locais_array[1].nome);
-  const rota = L.polyline([marcadorDF.getLatLng(), marcadorSP.getLatLng()], {color: 'red'}).bindPopup("Rota Brasília → Itupeva");
+  const marcadorDF = L.marker(locais_array[0].coords).bindPopup("<b>" + locais_array[0].nome + "</b><br>" + locais_array[0].descricao + "</b><br>" + locais_array[0].observacao);
+  const marcadorSP = L.marker(locais_array[1].coords).bindPopup("<b>" + locais_array[1].nome + "</b><br>" + locais_array[1].descricao + "</b><br>" + locais_array[1].observacao);
+  var distanciaMetros = map.distance(locais_array[0].coords, locais_array[1].coords);
+  var distanciaKm = (distanciaMetros / 1000).toFixed(1);
 
-  // Agrupando extras
-  const overlayMaps = {
-	"Marcador DF": marcadorDF,
-    "Marcador SP": marcadorSP,
-    "Rota DF-SP": rota
-  };
+  const rota = L.polyline([marcadorDF.getLatLng(), marcadorSP.getLatLng()], {color: 'red'}).bindPopup("Rota Brasília → Itupeva " + distanciaKm + " Km");
 
-  L.control.layers(baseMaps, overlayMaps).addTo(map);
-
-  // Adiciona extras por padrão
+  
+  // Adiciona locais padrão
   marcadorDF.addTo(map);
   marcadorSP.addTo(map);
   rota.addTo(map);
 
-  // Adiciona locais padrão e suas informações
-  locais_array.forEach(function(local) {
+  // Adiciona estações geodésicas e suas informações
+  locais_array.slice(2).forEach(function(local) {
     L.marker(local.coords)
-      .addTo(map)
-      .bindPopup("<b>" + local.nome + "</b><br>" + local.descricao + "</b><br>" + local.observacao);
+     .addTo(layerEstacoes)
+     .bindPopup("<b>" + local.nome + "</b><br>" + local.descricao + "</b><br>" + local.observacao);
   });
+  
+  // Agrupando extras
+  const overlayMaps = {
+	"Brasília": marcadorDF,
+    "Itupeva": marcadorSP,
+    "Rota Brasília-Itupeva": rota,
+	"Estações Geodésicas": layerEstacoes
+  };
+
+  L.control.layers(baseMaps, overlayMaps).addTo(map);
 
   // Adiciona escala
   L.control.scale({
@@ -149,9 +172,6 @@ const map_init = () => {
     metric: true            // ativa metros/km
   }).addTo(map);
 
-  // cria um grupo de camadas
-  layerLocais = L.layerGroup().addTo(map);
-    
   return map;
 };
 
@@ -178,8 +198,25 @@ async function calcularDistancia(map) {
 	const destino = await buscarLocal(destinoId);
     const data = await getDistancia(origemId, destinoId);
     if (data) {
+		console.log("Distância = ", data);
         const info = `<ul><li>Origem: ${data.origem}<li>Destino: ${data.destino}<li>Distância: ${data.distancia.toLocaleString('pt-BR')} ${data.unidade}`
 		const rota = L.polyline([origem.coords, destino.coords], {color: 'red'}).bindPopup(info);
+		rota.addTo(layerLocais);
+		map.fitBounds(rota.getBounds());
+		rota.openPopup();
+  }
+}
+
+// Função chamada ao clicar no botão distancia local
+async function calcularDistanciaLocal(map) {
+	const lat1 = document.getElementById("lat1").value;
+	const lon1 = document.getElementById("lon1").value;
+    const lat2 = document.getElementById("lat2").value;
+	const lon2 = document.getElementById("lon2").value;
+    const data = await getDistanciaLocal(lat1, lon1, lat2, lon2);
+    if (data) {
+		console.log("Distância = ", data);
+ 		const rota = L.polyline([[lat1, lon1], [lat2, lon2]], {color: 'red'}).bindPopup(`${(data/1000).toFixed(1)} Km`);
 		rota.addTo(layerLocais);
 		map.fitBounds(rota.getBounds());
 		rota.openPopup();
@@ -238,7 +275,26 @@ async function getDistancia(origemId, destinoId) {
     }
     
     const data = await response.json();
-    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Erro calculando distância: ", error);
+    return null;
+  }
+}
+
+// Chamada da API Local distancia entre dois pontos
+async function getDistanciaLocal(lat1, lon1, lat2, lon2) {
+  try {
+	
+    const response = await fetch(`https://localhost:8080/patagonia/distancia?lat1=${lat1}&lon1=${lon1}&alt1=1&lat2=${lat2}&lon2=${lon2}&alt2=1`, {
+      method: "GET"
+    });
+	
+    if (!response.ok) {
+      throw new Error("Erro na requisição: " + response.status);
+    }
+    
+    const data = await response.json();
     return data;
   } catch (error) {
     console.error("Erro calculando distância: ", error);
