@@ -8,7 +8,7 @@ import jakarta.validation.constraints.DecimalMin;
 
 public class Coordenada {
 
-	protected static final Logger LOGGER = LoggerFactory.getLogger(Coordenada.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Coordenada.class);
 
 	// Parâmetros do elipsóide WGS84
 	private static final double ACHATAMENTO = 1.0 / 298.257223563;
