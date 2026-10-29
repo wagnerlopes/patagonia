@@ -20,6 +20,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Class to calculate magnetic declination, magnetic field strength,
  * inclination etc. for any point on the earth.
@@ -34,6 +37,8 @@ import java.util.List;
  * @author © Deep Pradhan, 2017.
  */
 public class Geomagnetism {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(Geomagnetism.class);
 
   /** Mean radius of IAU-66 ellipsoid, in km */
   private static final double IAU66_RADIUS = 6371.2;
@@ -166,7 +171,7 @@ public class Geomagnetism {
         k[m][n] = (double) (((n - 1) * (n - 1)) - (m * m)) / (double) ((2 * n - 1) * (2 * n - 3));
         if (m > 0) {
           flnmj = ((n - m + 1) * j) / (double) (n + m);
-          snorm[n + m * 13] = snorm[n + (m -1) * 13] * Math.sqrt(flnmj);
+          snorm[n + m * 13] = snorm[n + (m - 1) * 13] * Math.sqrt(flnmj);
           j = 1;
           c[n][m - 1] = snorm[n + m * 13] * c[n][m - 1];
           cd[n][m - 1] = snorm[n + m * 13] * cd[n][m - 1];
@@ -183,42 +188,42 @@ public class Geomagnetism {
   }
 
   /** Initialise the instance and calculate for given location, altitude and date.
+   *  @param latitude   Latitude in decimal degrees
    *	@param longitude	Longitude in decimal degrees
-   *	@param latitude		Latitude in decimal degrees
    *	@param altitude		Altitude in metres (with respect to WGS-1984 ellipsoid)
    *	@param calendar		Calendar for date of calculation
    */
-  Geomagnetism(double longitude, double latitude, double altitude, LocalDate date) {
+  Geomagnetism(double latitude, double longitude, double altitude, LocalDate date) {
     this();
-    calculate(longitude, latitude, altitude, date);
+    calculate(latitude, longitude, altitude, date);
   }
 
   /** Initialise the instance and calculate for given location, altitude and current date.
+   *  @param latitude   Latitude in decimal degrees
    *	@param longitude	Longitude in decimal degrees
-   *	@param latitude		Latitude in decimal degrees
    *	@param altitude		Altitude in metres (with respect to WGS-1984 ellipsoid)
    */
-  Geomagnetism(double longitude, double latitude, double altitude) {
+  Geomagnetism(double latitude, double longitude, double altitude) {
     this();
-    calculate(longitude, latitude, altitude);
+    calculate(latitude, longitude, altitude);
   }
 
   /** Initialise the instance and calculate for given location, zero altitude and current date.
+   *  @param latitude   Latitude in decimal degrees
    *	@param longitude	Longitude in decimal degrees
-   *	@param latitude		Latitude in decimal degrees
    */
-  Geomagnetism(double longitude, double latitude) {
+  Geomagnetism(double latitude, double longitude) {
     this();
-    calculate(longitude, latitude);
+    calculate(latitude, longitude);
   }
 
   /** Calculate for given location, altitude and date.
+   *  @param latitude   Latitude in decimal degrees
    *	@param longitude	Longitude in decimal degrees
-   *	@param latitude		Latitude in decimal degrees
    *	@param altitude		Altitude in metres (with respect to WGS-1984 ellipsoid)
    *	@param date		    Date of calculation
    */
-  void calculate(double longitude, double latitude, double altitude, LocalDate date) {
+  void calculate(double latitude, double longitude, double altitude, LocalDate date) {
     double rlon = Math.toRadians(longitude);
     double rlat = Math.toRadians(latitude);
     double altitudeKm = Double.isNaN(altitude) ? 0 : altitude / 1000;
@@ -238,7 +243,7 @@ public class Geomagnetism {
     // Define years between now and file data
     double yearFraction = date.getYear() + ((double) date.getDayOfYear() - 1) / date.lengthOfYear();
     double dt = yearFraction - epoch;
-    
+
     sp[1] = srlon;
     cp[1] = crlon;
 
@@ -274,7 +279,7 @@ public class Geomagnetism {
         if (altitudeKm != oalt || latitude != olat) {
           if (n == m) {
             snorm[n + m * 13] = st * snorm[n - 1 + (m - 1) * 13];				
-            dp[m][n] = st * dp[m - 1][n - 1]+ ct * snorm[n - 1 + (m - 1) * 13];
+            dp[m][n] = st * dp[m - 1][n - 1] + ct * snorm[n - 1 + (m - 1) * 13];
           }
           if (n == 1 && m == 0) {
             snorm[n + m * 13] = ct * snorm[n - 1 + m * 13];
@@ -295,7 +300,7 @@ public class Geomagnetism {
           tc[m][n] = c[m][n] + dt * cd[m][n];
 
           if (m != 0)
-            tc[n][m - 1] = c[n][m - 1]+ dt * cd[n][m - 1];
+            tc[n][m - 1] = c[n][m - 1] + dt * cd[n][m - 1];
         }
 
         // Accumulate terms of the spherical harmonic expansions
@@ -355,16 +360,16 @@ public class Geomagnetism {
    *	@param latitude		Latitude in decimal degrees
    *	@param altitude		Altitude in metres (with respect to WGS-1984 ellipsoid)
    */
-  void calculate(double longitude, double latitude, double altitude) {
-    calculate(longitude, latitude, altitude, LocalDate.now());
+  void calculate(double latitude, double longitude, double altitude) {
+    calculate(latitude, longitude, altitude, LocalDate.now());
   }
 
   /** Calculate for given location, zero altitude and current date
    *	@param longitude	Longitude in decimal degrees
    *	@param latitude		Latitude in decimal degrees
    */
-  void calculate(double longitude, double latitude) {
-    calculate(longitude, latitude, 0);
+  void calculate(double latitude, double longitude) {
+    calculate(latitude, longitude, 0);
   }
 
   /** Get declination.
@@ -417,7 +422,7 @@ public class Geomagnetism {
   }
 
   /** Load file WMMM.COF from resources into a string array. */
-  private String[] loadFile(){
+  private String[] loadFile() {
 
     try (InputStream is = getClass().getClassLoader().getResourceAsStream("WMM.COF")) {
 
@@ -430,6 +435,9 @@ public class Geomagnetism {
         String line;
         while ((line = reader.readLine()) != null) {
           line = line.trim();
+          if (line.contains("WMM-")) {
+            LOGGER.info("{}", line);
+          }
           if (line.isEmpty()) {
             continue;
           }
@@ -451,7 +459,7 @@ public class Geomagnetism {
 
   public static void main(String[] args) {
 
-    Geomagnetism gm = new Geomagnetism(-47.061320, -23.166864);
+    Geomagnetism gm = new Geomagnetism(-23.166864, -47.061320);
 
     System.out.println("*************** Geomagnetism ***************");
     System.out.println("Declination: " + gm.getDeclination() + "°");
