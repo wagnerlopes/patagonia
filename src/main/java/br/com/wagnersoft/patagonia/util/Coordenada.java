@@ -29,9 +29,9 @@ public class Coordenada {
 
 	private double altitude;   // metros
 
-	public Coordenada(double latitude, double Longitude, double altitude) {
+	public Coordenada(double latitude, double longitude, double altitude) {
 		this.latitude = latitude;
-		this.longitude = Longitude;
+		this.longitude = longitude;
 		this.altitude = altitude;
 	}
 
@@ -47,6 +47,9 @@ public class Coordenada {
 	 */
 	public double haversineDistance(Coordenada outra) {
 
+    LOGGER.info("Origem -> {}", this);
+    LOGGER.info("Destino -> {}", outra);
+	  
 		double lat1 = this.latitude * TO_RADIANS;
 		double lon1 = this.longitude * TO_RADIANS;
 		double lat2 = outra.latitude * TO_RADIANS;
@@ -55,9 +58,7 @@ public class Coordenada {
 		double dLat = lat2 - lat1;
 		double dLon = lon2 - lon1;
 
-		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-  		           Math.cos(lat1) * Math.cos(lat2) *
-                   Math.sin(dLon / 2) * Math.sin(dLon / 2);
+		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
@@ -79,12 +80,13 @@ public class Coordenada {
 	 */
 	public double vincentyDistance(Coordenada outra) {
 
+    LOGGER.info("Origem -> {}", this);
+    LOGGER.info("Destino -> {}", outra);
+
 		double lat1 = this.latitude * TO_RADIANS;
 		double lon1 = this.longitude * TO_RADIANS;
 		double lat2 = outra.latitude * TO_RADIANS;
 		double lon2 = outra.longitude * TO_RADIANS;
-
-		LOGGER.info("Lat1 {}  Lon1 {} -  Lat2 {} Lon2 {}", lat1, lon1, lat2, lon2);
 
 		double L = lon2 - lon1;
 		

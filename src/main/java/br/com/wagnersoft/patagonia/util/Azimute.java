@@ -36,8 +36,8 @@ public class Azimute {
     double phi2 = Math.toRadians(lat2);
     double deltaLon = Math.toRadians(lon2 - lon1);
 
-    double y = Math.sin(deltaLon) * Math.cos(phi2);
     double x = Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltaLon);
+    double y = Math.sin(deltaLon) * Math.cos(phi2);
     double azV = Math.toDegrees(Math.atan2(y, x));
 
     LOGGER.debug("Azimute Verdadeiro (RAW): {}", String.format("%.3f°", azV));
