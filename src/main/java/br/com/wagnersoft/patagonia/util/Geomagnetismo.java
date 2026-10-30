@@ -36,9 +36,9 @@ import org.slf4j.LoggerFactory;
  * @version 0.0.1
  * @author © Deep Pradhan, 2017.
  */
-public class Geomagnetism {
+public class Geomagnetismo {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(Geomagnetism.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(Geomagnetismo.class);
 
   /** Mean radius of IAU-66 ellipsoid, in km */
   private static final double IAU66_RADIUS = 6371.2;
@@ -120,12 +120,14 @@ public class Geomagnetism {
   /** The input string array which contains each line of input for the wmm.cof input file.
    *  <p>The columns in this file are as follows:  n,  m,  gnm,  hnm,  dgnm, dhnm. </p>
    */
-  private final String [] WMM_COF;
+  private final String[] WMM_COF;
+
+  private String WMM_INFO = "...";
 
   private double r, d, ca, sa, ct, st;
 
   /** Initialise the instance without calculations. */
-  Geomagnetism() {
+  Geomagnetismo() {
 
     // Load WMM.COF file
     WMM_COF = this.loadFile();
@@ -193,7 +195,7 @@ public class Geomagnetism {
    *	@param altitude		Altitude in metres (with respect to WGS-1984 ellipsoid)
    *	@param calendar		Calendar for date of calculation
    */
-  Geomagnetism(double latitude, double longitude, double altitude, LocalDate date) {
+  Geomagnetismo(double latitude, double longitude, double altitude, LocalDate date) {
     this();
     calculate(latitude, longitude, altitude, date);
   }
@@ -203,7 +205,7 @@ public class Geomagnetism {
    *	@param longitude	Longitude in decimal degrees
    *	@param altitude		Altitude in metres (with respect to WGS-1984 ellipsoid)
    */
-  Geomagnetism(double latitude, double longitude, double altitude) {
+  Geomagnetismo(double latitude, double longitude, double altitude) {
     this();
     calculate(latitude, longitude, altitude);
   }
@@ -212,7 +214,7 @@ public class Geomagnetism {
    *  @param latitude   Latitude in decimal degrees
    *	@param longitude	Longitude in decimal degrees
    */
-  Geomagnetism(double latitude, double longitude) {
+  Geomagnetismo(double latitude, double longitude) {
     this();
     calculate(latitude, longitude);
   }
@@ -421,6 +423,10 @@ public class Geomagnetism {
     return by;
   }
 
+  String getWMMInfo() {
+    return WMM_INFO;
+  }
+
   /** Load file WMMM.COF from resources into a string array. */
   private String[] loadFile() {
 
@@ -436,7 +442,8 @@ public class Geomagnetism {
         while ((line = reader.readLine()) != null) {
           line = line.trim();
           if (line.contains("WMM-")) {
-            LOGGER.info("{}", line);
+            WMM_INFO = line.substring(18,41);
+            LOGGER.debug("{}", WMM_INFO);
           }
           if (line.isEmpty()) {
             continue;
@@ -457,18 +464,10 @@ public class Geomagnetism {
     }        
   }
 
-  public static void main(String[] args) {
-
-    Geomagnetism gm = new Geomagnetism(-23.166864, -47.061320);
-
-    System.out.println("*************** Geomagnetism ***************");
-    System.out.println("Declination: " + gm.getDeclination() + "°");
-    System.out.println("Inclination: " + gm.getInclination() + "°");
-    System.out.println("Total Intensity: " + gm.getIntensity() + " nT");
-    System.out.println("North Component X: " + gm.getNorthIntensity() + " nT");
-    System.out.println("East Component Y: " + gm.getEastIntensity() + " nT");
-    System.out.println("Vertical Component Z: " + gm.getVerticalIntensity() + " nT");
-    System.out.println("********************************************");
+  public String toString() {
+    return String.format(
+        "*************** Geomagnetism ***************%nWMM Info: %s%nDeclination: %.1f°%nInclination: %.2f°%nTotal Intensity: %.3f nT%nNorth Component X: %.4f nT%nEast Component Y: %.5f nT%nVertical Component Z: %.6f nT%n********************************************"
+        , this.getWMMInfo(), this.getDeclination(), this.getInclination(), this.getIntensity(), this.getNorthIntensity(), this.getEastIntensity(), this.getVerticalIntensity());
   }
 
 }

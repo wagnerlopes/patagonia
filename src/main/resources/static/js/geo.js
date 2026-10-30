@@ -49,12 +49,12 @@ window.onload = function() {
     console.log("Coordenadas clicadas:", lat, lng);
 
 	// Salva coordenadas anteriores
-	document.getElementById("lat2").value = document.getElementById("lat1").value;
-	document.getElementById("lon2").value = document.getElementById("lon1").value;
+	document.getElementById("lat1").value = document.getElementById("lat2").value;
+	document.getElementById("lon1").value = document.getElementById("lon2").value;
 
 	// Coordenadas atuais do ponto clicado  	
-	document.getElementById("lat1").value = lat;
-	document.getElementById("lon1").value = lng;
+	document.getElementById("lat2").value = lat;
+	document.getElementById("lon2").value = lng;
 	
     // Cria marcador no ponto clicado
     L.marker([lat, lng])
@@ -222,8 +222,10 @@ async function calcularDistanciaLocal(map) {
 	const lon2 = document.getElementById("lon2").value;
     const data = await getDistanciaLocal(lat1, lon1, lat2, lon2);
     if (data) {
-		console.log("Distância = ", data);
- 		const rota = L.polyline([[lat1, lon1], [lat2, lon2]], {color: 'red'}).bindPopup(`${(data/1000).toFixed(1)} Km`);
+		console.log("Info: ", data);
+		const azv = Number.isNaN(data.azv) ? "Valor inválido" : Number(data.azv).toFixed(1);
+		const azm = Number.isNaN(data.azm) ? "Valor inválido" : Number(data.azm).toFixed(1);
+ 		const rota = L.polyline([[lat1, lon1], [lat2, lon2]], {color: 'red'}).bindPopup(`<ul><li>Distância: ${(data.distancia/1000).toFixed(1)} Km<li>AzV: ${azv}°<li>AzM:${azm}°</ul>`);
 		rota.addTo(layerLocais);
 		map.fitBounds(rota.getBounds());
 		rota.openPopup();
@@ -293,7 +295,7 @@ async function getDistancia(origemId, destinoId) {
 async function getDistanciaLocal(lat1, lon1, lat2, lon2) {
   try {
 	
-    const response = await fetch(`https://localhost:8080/patagonia/distancia?lat1=${lat1}&lon1=${lon1}&alt1=1&lat2=${lat2}&lon2=${lon2}&alt2=1`, {
+    const response = await fetch(`https://localhost:8080/patagonia/info/distancia?lat1=${lat1}&lon1=${lon1}&alt1=1&lat2=${lat2}&lon2=${lon2}&alt2=1`, {
       method: "GET"
     });
 	
