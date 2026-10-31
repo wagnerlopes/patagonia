@@ -466,7 +466,7 @@ public class Geomagnetismo {
 
   public String toString() {
     return String.format(
-        "*************** Geomagnetism ***************%nWMM Info: %s%nDeclination: %.1f°%nInclination: %.2f°%nTotal Intensity: %.3f nT%nNorth Component X: %.4f nT%nEast Component Y: %.5f nT%nVertical Component Z: %.6f nT%n********************************************"
+        "%n*************** Geomagnetism ***************%nWMM Info: %s%nDeclination: %.1f°%nInclination: %.2f°%nTotal Intensity: %.3f nT%nNorth Component X: %.4f nT%nEast Component Y: %.5f nT%nVertical Component Z: %.6f nT%n********************************************"
         , this.getWMMInfo(), this.getDeclination(), this.getInclination(), this.getIntensity(), this.getNorthIntensity(), this.getEastIntensity(), this.getVerticalIntensity());
   }
 

@@ -3,6 +3,18 @@ package br.com.wagnersoft.patagonia.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** 
+ * Calcula o azimute verdadeiro ou magnético do ponto 1 para o ponto 2.
+ * 
+ * <p>O Cálculo utiliza as coordenadas geográficas dos pontos.</p>.
+ * <p>
+ * <code>Fórmula: θ = atan2(sin(Δλ) * cos(ϕ2​), cos(ϕ1​) * sin(ϕ2​) − sin(ϕ1​) * cos(ϕ2​) *cos(Δλ))</code>
+ * <code>onde Δλ = λ2​−λ1​</code>
+ * </p>
+ * @since 0.0.1
+ * @version 0.0.1
+ * @author Wagner Lopes
+ */
 public class Azimute {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Azimute.class);
@@ -23,7 +35,7 @@ public class Azimute {
     this.lat2 = lat2;
     this.lon2 = lon2;
     this.gm = new Geomagnetismo(lat1, lon1);
-    LOGGER.debug("Declinação: {}", String.format("%.6f°", gm.getDeclination()));
+    LOGGER.debug("{}", gm);
   }
 
   public static double normalizarAzimute(double graus) {
