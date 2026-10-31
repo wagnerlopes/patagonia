@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import br.com.wagnersoft.patagonia.geoinfo.Azimute;
+
 public class AzimuteTest {
 
   @Test

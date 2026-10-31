@@ -1,4 +1,4 @@
-package br.com.wagnersoft.patagonia.util;
+package br.com.wagnersoft.patagonia.geoinfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,9 +6,15 @@ import org.slf4j.LoggerFactory;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 
-public class Coordenada {
+/** Coordenada geográfica de um ponto.
+ * 
+ * @since 0.0.1
+ * @version 0.0.1
+ * @author Wagner Lopes
+ */
+public class CoordenadaGeografica {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(Coordenada.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CoordenadaGeografica.class);
 
 	// Parâmetros do elipsóide WGS84
 	private static final double ACHATAMENTO = 1.0 / 298.257223563;
@@ -29,7 +35,7 @@ public class Coordenada {
 
 	private double altitude;   // metros
 
-	public Coordenada(double latitude, double longitude, double altitude) {
+	public CoordenadaGeografica(double latitude, double longitude, double altitude) {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.altitude = altitude;
@@ -45,10 +51,10 @@ public class Coordenada {
 	 * @param outra Coordenada destino
 	 * @return distância em metros
 	 */
-	public double haversineDistance(Coordenada outra) {
+	public double haversineDistance(CoordenadaGeografica outra) {
 
-    LOGGER.info("Origem -> {}", this);
-    LOGGER.info("Destino -> {}", outra);
+    LOGGER.debug("Origem -> {}", this);
+    LOGGER.debug("Destino -> {}", outra);
 	  
 		double lat1 = this.latitude * TO_RADIANS;
 		double lon1 = this.longitude * TO_RADIANS;
@@ -78,10 +84,10 @@ public class Coordenada {
 	 * @param outra Coordenada destino
 	 * @return distância em metros
 	 */
-	public double vincentyDistance(Coordenada outra) {
+	public double vincentyDistance(CoordenadaGeografica outra) {
 
-    LOGGER.info("Origem -> {}", this);
-    LOGGER.info("Destino -> {}", outra);
+    LOGGER.debug("Origem -> {}", this);
+    LOGGER.debug("Destino -> {}", outra);
 
 		double lat1 = this.latitude * TO_RADIANS;
 		double lon1 = this.longitude * TO_RADIANS;
