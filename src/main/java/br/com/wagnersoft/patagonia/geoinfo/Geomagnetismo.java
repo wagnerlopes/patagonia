@@ -1,6 +1,6 @@
-package br.com.wagnersoft.patagonia.util;
+package br.com.wagnersoft.patagonia.geoinfo;
 
-/*
+/***********************************************************************
  * License Statement from the NOAA
  * -------------------------------
  * The WMM source code is in the public domain and not licensed or
@@ -10,7 +10,7 @@ package br.com.wagnersoft.patagonia.util;
  * by U.S. government agencies must provide notice with such work(s)
  * identifying the U.S. Government material incorporated and stating
  * that such material is not subject to copyright protection.
- */
+ ***********************************************************************/
 
 import java.io.BufferedReader;
 import java.io.IOException;
