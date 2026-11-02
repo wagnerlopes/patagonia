@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.wagnersoft.patagonia.geoinfo.Azimute;
 import br.com.wagnersoft.patagonia.geoinfo.CoordenadaGeografica;
 
-/** DistanciaController.
+/** 
+ * DistanciaController.
  * 
  * @since 0.0.1
  * @version 0.0.1
@@ -24,7 +25,7 @@ public class DistanciaController {
 
 	protected static final Logger LOGGER = LoggerFactory.getLogger(DistanciaController.class);
 
-  public record DistanciaDTO(Double distancia, Double azv, Double azm) { };
+  public record DistanciaDTO(Double distancia, Double azv, Double azm, String gm) { };
 
 	@GetMapping("/distancia")
 	public ResponseEntity<DistanciaDTO> obterDistancia(@RequestParam Double lat1, @RequestParam Double lon1, @RequestParam Double alt1, @RequestParam Double lat2, @RequestParam Double lon2, @RequestParam Double alt2) {
@@ -35,7 +36,7 @@ public class DistanciaController {
     Azimute az = new Azimute(lat1, lon1, lat2, lon2);
     Double azv = az.getAzimuteVerdadeiro();
     Double azm = az.getAzimuteMagnetico();
-		DistanciaDTO result = new DistanciaDTO(distancia, azv, azm);
+		DistanciaDTO result = new DistanciaDTO(distancia, azv, azm, az.getGeomagnetismoInfo());
 		LOGGER.debug("{}", result);
 		return ResponseEntity.ok(result);
 	}
