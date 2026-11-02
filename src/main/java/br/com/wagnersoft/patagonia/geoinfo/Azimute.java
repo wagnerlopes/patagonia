@@ -68,6 +68,10 @@ public class Azimute {
     return String.format("Coor1: %.6f, %.6f%nCoor2: %.6f, %.6f%nDM: %.6f°%nAzV: %.1f°%nAzM: %.1f°%n", lat1, lon1, lat2, lon2, gm.getDeclination(), this.getAzimuteVerdadeiro(), this.getAzimuteMagnetico());
   }
 
+  public String getGeomagnetismoInfo() {
+    return gm.toString();
+  }
+  
   public static void main(String[] args) {
     Azimute az = new Azimute(-23.166864, -47.061320, -15.79408736, -47.88790548);
     System.out.println(az);

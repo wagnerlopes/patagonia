@@ -63,6 +63,20 @@ window.onload = function() {
       .openPopup();
   });
 
+  // Obtendo localização aproximada pelo navegador
+  map.locate({setView: true, maxZoom: 16});
+
+  map.on('locationfound', function(e) {
+      L.marker(e.latlng)
+          .addTo(map)
+          .bindPopup('Você está aqui!<br>-> Aproximada: informada pelo navegador')
+          .openPopup();
+  });
+
+  map.on('locationerror', function(e) {
+      alert(e.message);
+  });
+
 }
 
 // Inicializa o Mapa
@@ -97,15 +111,21 @@ const map_init = () => {
     {
       nome: "Estação Geodésica 93807",
       coords: [-23.1367396089, -47.1668108481],
-      descricao: "Indaiatuba - Videiras",
+      descricao: "Indaiatuba - Bairro Videiras",
       observacao: "SIRGAS2000 - Alt 637 m"
     },
     {
       nome: "Estação Geodésica 93945",
       coords: [-23.1796478483, -47.3030324261],
-      descricao: "Salto - Jd São Gabriel",
+      descricao: "Salto - Jardim São Gabriel",
       observacao: "SIRGAS2000 - Altitude 558 m"
-    }
+    },
+	{
+	  nome: "Estação Geodésica 2852Z",
+	  coords: [-22.8511111111, -47.1166666667],
+	  descricao: "Campinas - SP-340",
+	  observacao: "SIRGAS2000 - Altitude 599 m"
+	}
   ];
 
   // Centraliza mapa no ponto default
@@ -161,13 +181,22 @@ const map_init = () => {
      .addTo(layerEstacoes)
      .bindPopup("<b>" + local.nome + "</b><br>" + local.descricao + "</b><br>" + local.observacao);
   });
-  
+
+  // Raio de 1km do local padrão
+  const circulo = L.circle(marcadorSP.getLatLng(), {
+      radius: 1000,
+      color: 'red',
+      fillColor: '#f03',
+      fillOpacity: 0.5
+  }).addTo(map);
+    
   // Controle lateral de pontos
   const overlayMaps = {
 	"Brasília": marcadorDF,
     "Itupeva": marcadorSP,
     "Rota Brasília-Itupeva": rota,
-	"Estações Geodésicas": layerEstacoes
+	"Estações Geodésicas": layerEstacoes,
+    "Raio de 1 Km": circulo
   };
 
   L.control.layers(baseMaps, overlayMaps).addTo(map);
@@ -188,7 +217,7 @@ async function carregarLocal(id, map) {
   console.log(local);
   if (local) {
     // Centraliza no ponto
-    map.setView(local.coords, 10);
+    map.flyTo(local.coords, 10);
 
     // Adiciona marcador
     L.marker(local.coords)

@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import jakarta.servlet.http.HttpSession;
 
-/** GeoController.
+/** 
+ * GeoController.
  * 
  * @since 0.0.1
  * @version 0.0.1
