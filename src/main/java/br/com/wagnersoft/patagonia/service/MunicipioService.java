@@ -2,6 +2,7 @@ package br.com.wagnersoft.patagonia.service;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -57,6 +58,11 @@ public class MunicipioService {
     return municipios;
   }
 
+  public Map<Long, String> mapAll() {
+    return this.findAll().stream()
+        .collect(Collectors.toMap(Municipio::getId, Municipio::getNome, (existing, replacement) -> existing, LinkedHashMap::new));
+  }
+  
   public Municipio findById(Long id) {
     return municipiosPorId.get(id);
   }

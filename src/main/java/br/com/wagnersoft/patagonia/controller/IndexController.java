@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import br.com.wagnersoft.patagonia.service.MunicipioService;
+import br.com.wagnersoft.patagonia.service.PopulacaoService;
 import jakarta.servlet.http.HttpSession;
 
 /** 
@@ -30,6 +31,9 @@ public class IndexController {
 
   @Autowired
   private MunicipioService munSvc;
+
+  @Autowired
+  private PopulacaoService popSvc;
   
   @GetMapping("/")
   public String index(HttpSession session, Model model) throws IOException {
@@ -37,8 +41,15 @@ public class IndexController {
     session.setMaxInactiveInterval(0);
     session.setAttribute("usr", usr);
     model.addAttribute("menu", "index");
-    model.addAttribute("mun", munSvc.findAll());
+    model.addAttribute("listMun", munSvc.mapAll());
     return "index";
   }
 
+  @GetMapping("/municipio")
+  public String municipio(Long id, Model model) {
+    model.addAttribute("municipio", munSvc.findById(id));
+    model.addAttribute("populacao", popSvc.obterPopulacao(id));
+    return "index";
+  }
+  
 }
