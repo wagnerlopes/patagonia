@@ -2,80 +2,253 @@
 
 <html lang="en" data-bs-theme="auto" xmlns:th="http://www.thymeleaf.org">
 
-  <head th:fragment = "meta">
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Cleint for Map Api" />
-    <meta name="author" content="Wagnersoft - WL"/>
-    <meta name="generator" content="Astro v5.13.2" />
-    <meta name="theme-color" content="#712cf9" />
+<head th:fragment = "meta">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Cleint for Map Api" />
+  <meta name="author" content="Wagnersoft - WL"/>
+  <meta name="generator" content="Astro v5.13.2" />
+  <meta name="theme-color" content="#712cf9" />
 
-    <title>Patagonia · WagnerSoft v0.0.1-alpha</title>
+  <title>Patagonia · WagnerSoft v0.0.1-alpha</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"> 
-    <link rel="stylesheet" type="text/css" media="all" href="../css/patagonia.css" th:href="@{/css/patagonia.css}"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"> 
+  <link rel="stylesheet" type="text/css" media="all" href="../css/patagonia.css" th:href="@{/css/patagonia.css}"/>
 
-  </head>
+</head>
 
-  <body class="m-5">
+<body class="m-5">
 
-    <h2>Patagônia - Geo Map</h2>
+  <header class="py-2 mb-2 border-bottom">
+   <div class="container d-flex flex-wrap justify-content-center">
+    <h2>Brasil Geoinformação</h2>
+    <i class="bi bi-globe-americas"></i>
+   </div>
+  </header>
     
-    <hr/>
+  <p>Bem-vindo, meu <strong><span th:text="${usr}">Usuário</span></strong>!</p>
+
+  <div class="card shadow-sm border-0">
+
+    <div class="card-body">
+
+      <h5 class="card-title mb-3">Consulta de Município</h5>
+
+      <form th:action="@{/municipio}" method="get" class="d-inline">
+        
+        <div class="row g-2 align-items-end">
+
+          <div class="col-md-5">
+            <select id="municipio" name="id" class="form-select">
+              <option value="">Selecione um município...</option>
+              <option th:each="m : ${allMunicipios}" th:value="${m.key}" th:text="${m.value}"></option>
+            </select>
+          </div>
+
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Pesquisar</button>
+          </div>
+
+          <div class="col-md-2">
+            <a th:href="@{/geo}">Acesse o mapa</a>
+          </div>
+                
+        </div>
+            
+      </form>
+        
+    </div>
+
+  </div>
+   
+  <div th:if="${emsg != null}" class="card shadow-sm border-0 mt-4">
+  
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="msg" name="emsg" th:value="${emsg}"/>
+    </div>
+
+  </div>
+
+  <div th:if="${municipio != null}" class="card shadow-sm border-0 mt-3">
     
-    <p>Bem-vindo, meu <strong><span th:text="${session.usr}">Usuário</span></strong>!</p>
-    
-    <a href="geo">Acesse o GeoMap</a>
+    <div class="card-body">
 
-    <p>(Experimental)</p>
+      <div class="d-flex align-items-center mb-3">
+        
+        <div class="bg-primary text-white rounded-circle p-3 me-3">
+          <i class="bi bi-geo-alt-fill"></i>
+        </div>
 
-    <hr/>
-    
-    <div class="form-group row mt-1">
-    
-    <label for="origemId" class="col-sm-2 form-label my-1 text-end">Origem (ID):</label>
-    <div class="col-sm-2">
-      <input type="text" class="form-control" id="origemId" placeholder="Digite o ID">
+        <div>
+           <h4 class="mb-0" th:text="${municipio.nome}">Jundiaí</h4>
+           <small class="text-muted">Município selecionado</small>
+        </div>
+        
+      </div>
+
+      <div class="row text-center">
+
+        <div class="col-md-6 mb-3 mb-md-0">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small">Código IBGE</div>
+            <div class="fs-5 fw-semibold" th:text="${municipio.id}">3525904</div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small">População</div>
+            <div class="fs-4 fw-bold text-success" th:text="${#numbers.formatInteger(populacao, 0, 'POINT')}">443.221</div>
+            <small class="text-muted">habitantes</small>
+          </div>
+        </div>
+          
+      </div>
+
+      <div class="row text-center g-3">
+
+        <div class="col-md-6 mb-3 mb-md-0">
+          <div class="border rounded p-3 h-100">
+            <small class="text-muted d-block">Unidade Federativa</small>
+            <strong th:text="${municipio.microrregiao.mesorregiao.uf.nome}">São Paulo</strong>
+            <div>
+              <span class="badge bg-secondary" th:text="${municipio.microrregiao.mesorregiao.uf.sigla}">SP</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="border rounded p-3 h-100">
+            <small class="text-muted d-block">Região</small>
+            <strong th:text="${municipio.microrregiao.mesorregiao.uf.regiao.nome}">Sudeste</strong>
+          </div>
+        </div>
+          
+      </div>
+           
+      <div class="row text-center">
+
+        <div class="col-md-6">
+          <div class="border rounded p-3 h-100">
+            <small class="text-muted d-block">Messorregião</small>
+            <strong th:text="${municipio.microrregiao.mesorregiao.nome}">São Paulo</strong>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3 mb-md-0">
+          <div class="border rounded p-3 h-100">
+            <small class="text-muted d-block">Microrregião</small>
+            <strong th:text="${municipio.microrregiao.nome}">Campinas</strong>
+          </div>
+        </div>
+          
+      </div>
+           
+    </div>
+       
+  </div>
+
+  <div th:if="${municipio != null}" class="card shadow-sm border-0 mt-4">
+
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">
+            📍 <span th:text="${municipio.nome}"></span>
+        </h4>
     </div>
 
-    <label for="destinoId" class="col-sm-2 form-label my-1 text-end">Destino (ID):</label>
-    <div class="col-sm-2">
-      <input type="text" class="form-control" id="destinoId" placeholder="Digite o ID">
+    <div class="card-body">
+
+        <!-- Destaque principal -->
+        <div class="text-center mb-4">
+            <div class="text-muted">
+                População estimada
+            </div>
+
+            <div class="display-5 fw-bold text-primary"
+                 th:text="${#numbers.formatInteger(populacao, 0, 'POINT')}">
+            </div>
+
+            <div class="text-muted">
+                habitantes
+            </div>
+        </div>
+
+        <!-- Informações complementares -->
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <small class="text-muted d-block">
+                        Unidade Federativa
+                    </small>
+                    <strong th:text="${municipio.microrregiao.mesorregiao.uf.nome}">
+                        São Paulo
+                    </strong>
+                    <div>
+                        <span class="badge bg-secondary"
+                              th:text="${municipio.microrregiao.mesorregiao.uf.sigla}">
+                            SP
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <small class="text-muted d-block">
+                        Região
+                    </small>
+                    <strong th:text="${municipio.microrregiao.mesorregiao.uf.regiao.nome}">
+                        Sudeste
+                    </strong>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <small class="text-muted d-block">
+                        Mesorregião
+                    </small>
+                    <strong th:text="${municipio.microrregiao.mesorregiao.nome}">
+                        Campinas
+                    </strong>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <small class="text-muted d-block">
+                        Microrregião
+                    </small>
+                    <strong th:text="${municipio.microrregiao.nome}">
+                        Jundiaí
+                    </strong>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="border rounded p-3">
+                    <small class="text-muted d-block">
+                        Código IBGE
+                    </small>
+                    <strong th:text="${municipio.id}">
+                        3525904
+                    </strong>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="col-sm-3">
-      <button class="btn btn-primary btn-small" id="btCalc">Calcular Distância</button>
-    </div>
+  </div>
 
-    <div class="col-sm-12 bt-1" id="resultId">
-    </div>
-
-    </div>
-
-    <hr/>
-    
-    <div class="form-group row mt-1">
-    <form th:action="@{/municipio}" method="get" class="d-inline">
-    <label for="munId" class="col-sm-2 form-label my-1 text-end">Municípios:</label>
-    <div class="col-sm-2">
-      <select id="munId" class="form-select" name="id">
-        <option selected value="">--- Selecione ---</option>
-        <option th:each="m : ${listMun}" th:value="${m.key}" th:text="${m.value}"> Município </option>
-      </select>
-    </div>
-    <div class="col-sm-2">
-      <input type="text" class="form-control" id="mun" name="id"  th:value="${municipio}"/>
-      <input type="text" class="form-control" id="pop" name="pop" th:value="${populacao}"/>
-    </div>
-    <div class="col-sm-1">
-      <button class="btn btn-primary btn-small" type="submit">Info</button>
-    </div>
-    </form>    
-    </div>
-
+  <footer class="border-top mt-3">
+     <p class="text-center text-body-secondary"> &copy; 2026 WagnerSoft IT Solutions.</p>
+  </footer>
 
   <script src="../js/index.js" th:src="@{/js/index.js}" ></script>
     
-  </body>
+</body>
 
 </html>
