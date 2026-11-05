@@ -26,8 +26,6 @@
    </div>
   </header>
     
-  <p>Bem-vindo, meu <strong><span th:text="${usr}">Usuário</span></strong>!</p>
-
   <div class="card shadow-sm border-0">
 
     <div class="card-body">
@@ -67,85 +65,6 @@
       <input type="text" class="form-control" id="msg" name="emsg" th:value="${emsg}"/>
     </div>
 
-  </div>
-
-  <div th:if="${municipio != null}" class="card shadow-sm border-0 mt-3">
-    
-    <div class="card-body">
-
-      <div class="d-flex align-items-center mb-3">
-        
-        <div class="bg-primary text-white rounded-circle p-3 me-3">
-          <i class="bi bi-geo-alt-fill"></i>
-        </div>
-
-        <div>
-           <h4 class="mb-0" th:text="${municipio.nome}">Jundiaí</h4>
-           <small class="text-muted">Município selecionado</small>
-        </div>
-        
-      </div>
-
-      <div class="row text-center">
-
-        <div class="col-md-6 mb-3 mb-md-0">
-          <div class="border rounded p-3 h-100">
-            <div class="text-muted small">Código IBGE</div>
-            <div class="fs-5 fw-semibold" th:text="${municipio.id}">3525904</div>
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <div class="border rounded p-3 h-100">
-            <div class="text-muted small">População</div>
-            <div class="fs-4 fw-bold text-success" th:text="${#numbers.formatInteger(populacao, 0, 'POINT')}">443.221</div>
-            <small class="text-muted">habitantes</small>
-          </div>
-        </div>
-          
-      </div>
-
-      <div class="row text-center g-3">
-
-        <div class="col-md-6 mb-3 mb-md-0">
-          <div class="border rounded p-3 h-100">
-            <small class="text-muted d-block">Unidade Federativa</small>
-            <strong th:text="${municipio.microrregiao.mesorregiao.uf.nome}">São Paulo</strong>
-            <div>
-              <span class="badge bg-secondary" th:text="${municipio.microrregiao.mesorregiao.uf.sigla}">SP</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <div class="border rounded p-3 h-100">
-            <small class="text-muted d-block">Região</small>
-            <strong th:text="${municipio.microrregiao.mesorregiao.uf.regiao.nome}">Sudeste</strong>
-          </div>
-        </div>
-          
-      </div>
-           
-      <div class="row text-center">
-
-        <div class="col-md-6">
-          <div class="border rounded p-3 h-100">
-            <small class="text-muted d-block">Messorregião</small>
-            <strong th:text="${municipio.microrregiao.mesorregiao.nome}">São Paulo</strong>
-          </div>
-        </div>
-
-        <div class="col-md-6 mb-3 mb-md-0">
-          <div class="border rounded p-3 h-100">
-            <small class="text-muted d-block">Microrregião</small>
-            <strong th:text="${municipio.microrregiao.nome}">Campinas</strong>
-          </div>
-        </div>
-          
-      </div>
-           
-    </div>
-       
   </div>
 
   <div th:if="${municipio != null}" class="card shadow-sm border-0 mt-4">

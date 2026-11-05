@@ -6,6 +6,11 @@
   height: 1rem;
 }
 
+#map {
+  height: 500px;
+  width: 100%;
+}
+
 /* evita menu dropdown espanda o header */
 .navbar .dropdown-menu{
   position: absolute;
