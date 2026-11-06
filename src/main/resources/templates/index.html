@@ -78,9 +78,11 @@
   <div th:if="${municipio != null}" class="card shadow-sm border-0 mb-1 pb-1">
 
     <div class="card-header bg-primary text-white">
-        <h4 class="mb-0">
-            📍 <span th:text="${municipio.nome}"></span>
-        </h4>
+        <div class="fs-4 fw-semibold">
+          <i class="bi bi-geo fs-4 me-1"></i>
+          <span th:text="${municipio.nome}"></span>
+        </div>
+        <div class="small text-white-50" th:text="${'(Código IBGE ' + municipio.id  + ')'}">3525904</div>
     </div>
 
     <div class="card-body">
@@ -88,7 +90,7 @@
         <!-- Destaque principal -->
         <div class="text-center mb-4">
             <div class="text-muted">
-                População estimada
+                População Estimada
             </div>
 
             <div class="display-5 fw-bold text-primary"
@@ -151,25 +153,30 @@
                         Jundiaí
                     </strong>
                 </div>
+                
             </div>
 
             <div class="col-6">
                 <div class="border rounded p-3">
-                    <small class="text-muted d-block">
-                        Código IBGE
-                    </small>
-                    <strong th:text="${municipio.id}">
-                        3525904
-                    </strong>
+                    <small class="text-muted d-block">PIB Municipal - R$ milhões</small>
+                    <canvas class="my-4 w-100" id="pibChart" width="300" height="100"></canvas>
+                    <div class="text-end mt-1">
+                      <small class="text-muted">
+                         Fonte: IBGE - SIDRA
+                      </small>
+                    </div>
                 </div>
             </div>
 
             <div class="col-6">
                 <div class="border rounded p-3">
-                    <small class="text-muted d-block">
-                        Série Histórica População
-                    </small>
-                    <canvas class="my-4 w-100" id="myChart" width="300" height="100"></canvas>
+                    <small class="text-muted d-block">População Residente</small>
+                    <canvas class="my-4 w-100" id="popChart" width="300" height="100"></canvas>
+                    <div class="text-end mt-1">
+                      <small class="text-muted">
+                         Fonte: IBGE - SIDRA
+                      </small>
+                    </div>
                 </div>
             </div>
 
