@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Fragmento Grafico</title>
+</head>
+
+<body>
+
+    <div class="col-md-9 col-lg-10 ms-sm-auto p-md-4" th:fragment="div-content">
+
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            
+            <h2 th:text="#{grafico.titulo}">Série Histórica</h2>
+
+            <div class="btn-toolbar mb-2 mb-md-0">
+
+              <div class="btn-group me-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" th:text="#{grafico.compartilhar}">Compartilhar</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" th:text="#{grafico.exportar}">Exportar</button>
+              </div>
+
+              <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1">
+                <svg class="bi" aria-hidden="true">
+                  <use xlink:href="#calendar3"></use>
+                </svg>
+                Agenda
+              </button>
+            </div>
+          </div>
+
+          <canvas class="my-4 w-100" id="myChart" width="850" height="300"></canvas>
+
+    </div>
+
+</body>
+
+</html>
