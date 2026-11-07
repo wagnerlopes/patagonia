@@ -35,15 +35,15 @@ public class MunicipioService {
 
   private final Map<Long, Municipio> municipiosPorId;
 
-  public MunicipioService(){
+  public MunicipioService() {
 
     ObjectMapper mapper = new ObjectMapper();
 
     try {
+      
       ClassPathResource resource = new ClassPathResource("municipios.json");
 
       this.municipios = Collections.unmodifiableList(mapper.readValue(resource.getFile(), new TypeReference<List<Municipio>>() {}));
-
       this.municipiosPorId = municipios.stream().collect(Collectors.toMap(Municipio::getId, Function.identity()));
 
       LOGGER.info("Total de municípios: {}", municipios.size());
@@ -54,15 +54,15 @@ public class MunicipioService {
 
   }
 
-  public List<Municipio> findAll() {
+  public List<Municipio> listAll() {
     return municipios;
   }
 
   public Map<Long, String> mapAll() {
-    return this.findAll().stream()
+    return this.listAll().stream()
         .collect(Collectors.toMap(Municipio::getId, Municipio::getNome, (existing, replacement) -> existing, LinkedHashMap::new));
   }
-  
+
   public Municipio findById(Long id) {
     return municipiosPorId.get(id);
   }

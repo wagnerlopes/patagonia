@@ -14,33 +14,42 @@ import org.springframework.stereotype.Service;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+/**
+ * PopulacaoService.
+ *
+ * @since 0.0.1
+ * @version 0.0.1
+ * @author Wagner Lopes
+ */
 @Service
 public class PopulacaoService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PopulacaoService.class);
 
   private final HttpClient httpClient;
-  
+
   private final ObjectMapper mapper;
 
   private final Map<Long, Long> cache = new ConcurrentHashMap<>();
 
   public PopulacaoService() {
+
     this.httpClient = HttpClient.newBuilder()
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build();
-    
+
     this.mapper = new ObjectMapper();
   }
 
-  public Long obterPopulacao(Long codigoMunicipio) {
+  public Long obterPopulacao(Long munId) {
 
-    if (cache.containsKey(codigoMunicipio)) {
-      return cache.get(codigoMunicipio);
+    if (cache.containsKey(munId)) {
+      return cache.get(munId);
     }
 
     try {
-      String url = "https://api.sidra.ibge.gov.br/values/t/6579/n6/" + codigoMunicipio + "/v/9324";
+
+      String url = "https://api.sidra.ibge.gov.br/values/t/6579/n6/" + munId + "/v/9324";
 
       HttpRequest request = HttpRequest.newBuilder()
           .uri(URI.create(url))
@@ -53,18 +62,19 @@ public class PopulacaoService {
       JsonNode root = mapper.readTree(response.body());
 
       if (root.size() < 2) {
-        throw new RuntimeException("Nenhum dado encontrado para o município " + codigoMunicipio);
+        throw new RuntimeException("Nenhum dado encontrado: COD " + munId);
       }
 
       // População retornada
       Long populacao = root.get(1).get("V").asLong();
-      cache.put(codigoMunicipio, populacao);
-      LOGGER.info("População carregada para município {}: {}", codigoMunicipio, populacao);
+      cache.put(munId, populacao);
 
+      LOGGER.info("População carregada (COD {}): {}", munId, populacao);
       return populacao;
     } catch (Exception e) {
-      throw new RuntimeException("Erro ao consultar população do município " + codigoMunicipio, e);
+      throw new RuntimeException("Erro ao consultar população COD " + munId, e);
     }
+
   }
 
 }
