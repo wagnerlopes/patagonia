@@ -69,7 +69,7 @@ window.onload = function() {
   map.on('locationfound', function(e) {
       L.marker(e.latlng)
           .addTo(map)
-          .bindPopup('Você está aqui!<br>-> Aproximada: informada pelo navegador')
+          .bindPopup('Você está aqui!')
           .openPopup();
   });
 
@@ -324,7 +324,7 @@ async function getDistancia(origemId, destinoId) {
 async function getDistanciaLocal(lat1, lon1, lat2, lon2) {
   try {
 	
-    const response = await fetch(`https://localhost:8080/patagonia/info/distancia?lat1=${lat1}&lon1=${lon1}&alt1=1&lat2=${lat2}&lon2=${lon2}&alt2=1`, {
+    const response = await fetch(`https://localhost:8443/patagonia/distancia?lat1=${lat1}&lon1=${lon1}&alt1=1&lat2=${lat2}&lon2=${lon2}&alt2=1`, {
       method: "GET"
     });
 	
@@ -336,6 +336,26 @@ async function getDistanciaLocal(lat1, lon1, lat2, lon2) {
     return data;
   } catch (error) {
     console.error("Erro calculando distância: ", error);
+    return null;
+  }
+}
+
+// Chamada da API Local Mun Info
+async function getMunInfo(id) {
+  try {
+	
+    const response = await fetch(`https://localhost:8443/patagonia/geomap/muninfo?id=${id}`, {
+      method: "GET"
+    });
+	
+    if (!response.ok) {
+      throw new Error("Erro na requisição: " + response.status);
+    }
+    
+    const dados = await response.json();
+    return dados;
+  } catch (error) {
+    console.error("Erro Mun Info: ", error);
     return null;
   }
 }

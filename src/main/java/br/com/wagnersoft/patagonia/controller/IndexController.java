@@ -38,7 +38,7 @@ public class IndexController {
   private PopulacaoService popSvc;
   
   @ModelAttribute("allMunicipios")
-  public Map<Long, String> listBeneficiarios() {
+  public Map<Long, String> allMunicipios() {
     return munSvc.mapAll();
   }
 

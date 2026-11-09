@@ -20,14 +20,14 @@ import br.com.wagnersoft.patagonia.geoinfo.CoordenadaGeografica;
  * @author Wagner Lopes
  */
 @RestController
-@RequestMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/distancia", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DistanciaController {
 
 	protected static final Logger LOGGER = LoggerFactory.getLogger(DistanciaController.class);
 
   public record DistanciaDTO(Double distancia, Double azv, Double azm, String gm) { };
 
-	@GetMapping("/distancia")
+	@GetMapping
 	public ResponseEntity<DistanciaDTO> obterDistancia(@RequestParam Double lat1, @RequestParam Double lon1, @RequestParam Double alt1, @RequestParam Double lat2, @RequestParam Double lon2, @RequestParam Double alt2) {
 
     LOGGER.info("Lat1: {} Lon1: {} Lat2: {} Lon2: {}", lat1, lon1, lat2, lon2);
