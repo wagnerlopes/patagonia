@@ -19,9 +19,9 @@ window.onload = function() {
   });
 
   document.getElementById('btSearch2').addEventListener('click', (e) => {
-  const id = document.getElementById("destinoId").value;
+    const id = document.getElementById("destinoId").value;
     console.log("Destino (ID) = " + id);
-  carregarLocal(id, map);
+    carregarLocal(id, map);
   });
 
   document.getElementById('btCalc').addEventListener('click', (e) => {
@@ -222,7 +222,7 @@ async function carregarLocal(id, map) {
     // Adiciona marcador
     L.marker(local.coords)
       .addTo(layerLocais)
-      .bindPopup(`<b>Localidade: ${local.nome}</b><br>Município: ${local.municipio} - ${local.uf}<br>Distrito: ${local.distrito}<br>Microrregião: ${local.microrregiao}<br>Mesorregião: ${local.mesorregiao}`);
+      .bindPopup(`<b>Localidade: ${local.nome}</b><br>Município: ${local.municipio} - ${local.uf} (${local.munIbgeId})<br>Distrito: ${local.distrito}<br>Microrregião: ${local.microrregiao}<br>Mesorregião: ${local.mesorregiao}`);
   }
 }
 
@@ -283,7 +283,8 @@ async function buscarLocal(id) {
     const local = { 
       nome: data.properties.localidade,
       coords: [data.geometry.coordinates[0], data.geometry.coordinates[1]], // Leaflet espera [lat, lon]
-      municipio: data.properties.municipio,
+	  municipio: data.properties.municipio,
+	  munIbgeId: data.properties.munIbgeID,
       distrito: data.properties.distrito,
       microrregiao: data.properties.microrregiao,
       mesorregiao: data.properties.mesorregiao,
