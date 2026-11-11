@@ -268,7 +268,7 @@ async function calcularDistanciaLocal(map) {
 // Chamada assincrona da api remota localidade por ID
 async function buscarLocal(id) {
   try {
-    const response = await fetch(`https://localhost/babilonia/api/v1/localidade/id?id=${id}`, {
+    const response = await fetch(`https://babilonia.local/api/v1/localidade/id?id=${id}`, {
       method: "GET",
       headers: {
         "x-api-key": "3f6988fd-feff-477a-9772-c2ceefda3b39"
@@ -302,7 +302,7 @@ async function buscarLocal(id) {
 async function getDistancia(origemId, destinoId) {
   try {
 	
-    const response = await fetch(`https://localhost/babilonia/api/v1/localidade/distancia?origem=${origemId}&destino=${destinoId}`, {
+    const response = await fetch(`https://babilonia.local/api/v1/localidade/distancia?origem=${origemId}&destino=${destinoId}`, {
       method: "GET",
       headers: {
         "x-api-key": "3f6988fd-feff-477a-9772-c2ceefda3b39"
@@ -325,7 +325,7 @@ async function getDistancia(origemId, destinoId) {
 async function getDistanciaLocal(lat1, lon1, lat2, lon2) {
   try {
 	
-    const response = await fetch(`https://localhost:8443/patagonia/distancia?lat1=${lat1}&lon1=${lon1}&alt1=1&lat2=${lat2}&lon2=${lon2}&alt2=1`, {
+    const response = await fetch(`https://patagonia.local:8443/distancia?lat1=${lat1}&lon1=${lon1}&alt1=1&lat2=${lat2}&lon2=${lon2}&alt2=1`, {
       method: "GET"
     });
 	
@@ -345,7 +345,7 @@ async function getDistanciaLocal(lat1, lon1, lat2, lon2) {
 async function getMunInfo(id) {
   try {
 	
-    const response = await fetch(`https://localhost:8443/patagonia/geomap/muninfo?id=${id}`, {
+    const response = await fetch(`https://patagonia.local:8443/geomap/muninfo?id=${id}`, {
       method: "GET"
     });
 	
