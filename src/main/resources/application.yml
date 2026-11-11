@@ -23,17 +23,17 @@ server:
     enabled: true
 
   servlet:
-    context-path: /patagonia
+    context-path: 
     compression:
       enabled: true
       min-response-size: 1KB
         
   ssl:
     enabled: true
-    key-store: classpath:wagnersoft.p12
+    key-store: classpath:patagonia.p12
     key-store-password: wl1234
-    keyStoreType: PKCS12
-    keyAlias: wagnersoft
+    key-store-type: PKCS12
+    key-alias: patagonia
 
 spring:
 
