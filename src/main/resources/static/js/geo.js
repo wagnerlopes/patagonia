@@ -11,19 +11,29 @@ window.addEventListener('load', () => map = map_init());
 
 // Associa eventos após carregar a janela
 window.onload = function() {
-	
-  document.getElementById('btSearch1').addEventListener('click', (e) => {
-	const id = document.getElementById("origemId").value;
+
+  document.getElementById('munOri').addEventListener('change', (e) => {
+	const id = e.target.value;
+	carregarLocalidades(id, 'origemId');
+  });
+  		
+  document.getElementById('origemId').addEventListener('change', (e) => {
+	const id = e.target.value;
     console.log("Origem (ID) = " + id);
 	carregarLocal(id, map);
   });
 
-  document.getElementById('btSearch2').addEventListener('click', (e) => {
-    const id = document.getElementById("destinoId").value;
+  document.getElementById('munDes').addEventListener('change', (e) => {
+    const id = e.target.value;
+    carregarLocalidades(id, 'destinoId');
+  });
+
+  document.getElementById('destinoId').addEventListener('change', (e) => {
+    const id = e.target.value;
     console.log("Destino (ID) = " + id);
     carregarLocal(id, map);
   });
-
+    
   document.getElementById('btCalc').addEventListener('click', (e) => {
     calcularDistancia(map);
   });
@@ -211,6 +221,26 @@ const map_init = () => {
   return map;
 };
 
+
+// Função chamada ao selecionar municipio de origem ou destino
+async function carregarLocalidades(ibgeId, htmlSelectId) {
+	
+  const localidades = await getLocalidades(ibgeId);
+
+  const select = document.getElementById(htmlSelectId);
+
+  // Limpa opções existentes
+  select.innerHTML = '<option value="">Selecione a localidade...</option>';
+
+  // Adiciona novas opções
+  Object.entries(localidades).forEach(([id, descricao]) => {
+    const option = document.createElement('option');
+    option.value = id;
+    option.textContent = descricao;
+    select.appendChild(option);
+  });
+}
+
 // Função chamada ao clicar no botão search
 async function carregarLocal(id, map) {
   const local = await buscarLocal(id);
@@ -317,6 +347,29 @@ async function getDistancia(origemId, destinoId) {
     return data;
   } catch (error) {
     console.error("Erro calculando distância: ", error);
+    return null;
+  }
+}
+
+// Chamada da api remota localidades de municipio por IBGE_ID
+async function getLocalidades(ibgeId) {
+  try {
+	
+    const response = await fetch(`https://babilonia.local/api/v1/localidade/municipio?ibgeId=${ibgeId}`, {
+      method: "GET",
+      headers: {
+        "x-api-key": "3f6988fd-feff-477a-9772-c2ceefda3b39"
+      }   
+    });
+	
+    if (!response.ok) {
+      throw new Error("Erro na requisição: " + response.status);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Erro consultando localidades: ", error);
     return null;
   }
 }

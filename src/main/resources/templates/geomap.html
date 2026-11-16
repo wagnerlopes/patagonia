@@ -36,20 +36,30 @@
 
       <div class="row g-2 align-items-end">
 
-        <div class="col-sm-2 form-group">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text">Origem</span>
-            <input type="text" class="form-control form-control-sm" placeholder="digite o id" id="origemId">
-            <button class="btn btn-primary btn-sm" type="button" id="btSearch1"><i class="bi bi-geo-alt"></i></button>
-          </div>
+        <div class="col-md-3">
+          <select id="munOri" name="munOri" class="form-select form-select-sm">
+            <option value="">Selecione um município...</option>
+            <option th:each="m : ${allMunicipios}" th:value="${m.key}" th:text="${m.value}"></option>
+          </select>
         </div>
+
+        <div class="col-md-3 form-group">
+          <select id="origemId" name="origemId" class="form-select form-select-sm"></select>
+        </div>
+
+      </div>
     
-        <div class="col-sm-2 form-group">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text">Destino</span>
-            <input type="text" class="form-control form-control-sm" placeholder="digite o id" id="destinoId">
-            <button class="btn btn-primary btn-sm" type="button" id="btSearch2"><i class="bi bi-geo-alt"></i></button>
-          </div>
+      <div class="row g-2 align-items-end">
+      
+        <div class="col-md-3">
+          <select id="munDes" name="munDes" class="form-select form-select-sm">
+            <option value="">Selecione um município...</option>
+            <option th:each="m : ${allMunicipios}" th:value="${m.key}" th:text="${m.value}"></option>
+          </select>
+        </div>
+
+        <div class="col-md-3 form-group">
+          <select id="destinoId" name="destinoId" class="form-select form-select-sm"></select>
         </div>
 
         <div class="col-sm-4">
@@ -66,14 +76,15 @@
     
     <div class="card-body">
 
+      <h5 class="card-title mb-2">Locais Selecionados (Clique no mapa)</h5>
+
       <div class="row g-2 align-items-end">
   
-        <label for="lat1" class="col-sm-1 form-label text-end">Ponto 1:</label>
         <div class="col-sm-4 form-group">
           <div class="input-group input-group-sm">
-            <span class="input-group-text">Lat</span>
+            <span class="input-group-text">Lat1</span>
             <input type="text" class="form-control form-control-sm" id="lat1">
-            <span class="input-group-text">Lon</span>
+            <span class="input-group-text">Lon1</span>
             <input type="text" class="form-control form-control-sm" id="lon1">
           </div>
         </div>
@@ -86,12 +97,11 @@
       
       <div class="row g-2 align-items-end">
 
-        <label for="lat2" class="col-sm-1 form-label text-end">Ponto 2:</label>
         <div class="col-sm-4 form-group">
           <div class="input-group input-group-sm">
-            <span class="input-group-text">Lat</span>
+            <span class="input-group-text">Lat2</span>
             <input type="text" class="form-control form-control-sm" id="lat2">
-            <span class="input-group-text">Lon</span>
+            <span class="input-group-text">Lon2</span>
             <input type="text" class="form-control form-control-sm" id="lon2">
           </div>
         </div>
