@@ -36,13 +36,16 @@
 
       <div class="row g-2 align-items-end">
 
-        <div class="col-md-3">
-          <select id="munOri" name="munOri" class="form-select form-select-sm">
-            <option value="">Selecione um município...</option>
-            <option th:each="m : ${allMunicipios}" th:value="${m.key}" th:text="${m.value}"></option>
-          </select>
+        <div class="col-md-3 form-group">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text">Origem</span>
+            <select id="munOri" name="munOri" class="form-select form-select-sm">
+              <option value="">Selecione um município...</option>
+              <option th:each="m : ${allMunicipios}" th:value="${m.key}" th:text="${m.value}"></option>
+            </select>
+          </div>
         </div>
-
+        
         <div class="col-md-3 form-group">
           <select id="origemId" name="origemId" class="form-select form-select-sm"></select>
         </div>
@@ -51,11 +54,14 @@
     
       <div class="row g-2 align-items-end">
       
-        <div class="col-md-3">
-          <select id="munDes" name="munDes" class="form-select form-select-sm">
-            <option value="">Selecione um município...</option>
-            <option th:each="m : ${allMunicipios}" th:value="${m.key}" th:text="${m.value}"></option>
-          </select>
+        <div class="col-md-3 form-group">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text">Destino</span>
+            <select id="munDes" name="munDes" class="form-select form-select-sm">
+              <option value="">Selecione um município...</option>
+              <option th:each="m : ${allMunicipios}" th:value="${m.key}" th:text="${m.value}"></option>
+            </select>
+          </div>
         </div>
 
         <div class="col-md-3 form-group">
