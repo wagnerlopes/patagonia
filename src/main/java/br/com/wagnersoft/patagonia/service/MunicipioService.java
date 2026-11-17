@@ -46,6 +46,9 @@ public class MunicipioService {
       this.municipios = Collections.unmodifiableList(mapper.readValue(resource.getFile(), new TypeReference<List<Municipio>>() {}));
       this.municipiosPorId = municipios.stream().collect(Collectors.toMap(Municipio::getId, Function.identity()));
 
+      // Verifica municípios incompletos
+      municipios.stream().filter(m -> m.getMicrorregiao() == null).forEach(System.out::println);
+      
       LOGGER.info("Total de municípios: {}", municipios.size());
 
     } catch (JacksonException | IOException e) {
@@ -60,9 +63,16 @@ public class MunicipioService {
 
   public Map<Long, String> mapAll() {
     return this.listAll().stream()
-        .collect(Collectors.toMap(Municipio::getId, Municipio::getNome, (existing, replacement) -> existing, LinkedHashMap::new));
+        .collect(Collectors.toMap(Municipio::getId, this::formatarNomeMunicipio, (existing, replacement) -> existing, LinkedHashMap::new));
   }
 
+  private String formatarNomeMunicipio(Municipio municipio) {
+    return municipio.getNome() + " - " + municipio.getMicrorregiao()
+                                                  .getMesorregiao()
+                                                  .getUf()
+                                                  .getSigla();
+  }
+  
   public Municipio findById(Long id) {
     return municipiosPorId.get(id);
   }
