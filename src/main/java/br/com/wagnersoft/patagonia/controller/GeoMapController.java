@@ -1,5 +1,7 @@
 package br.com.wagnersoft.patagonia.controller;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import br.com.wagnersoft.patagonia.service.MunicipioService;
 import br.com.wagnersoft.patagonia.service.PibService;
 import br.com.wagnersoft.patagonia.service.PopulacaoService;
 
@@ -33,6 +37,14 @@ public class GeoMapController {
   
   @Autowired
   private PibService pibSvc;
+
+  @Autowired
+  private MunicipioService munSvc;
+
+  @ModelAttribute("allMunicipios")
+  public Map<Long, String> allMunicipios() {
+    return munSvc.mapAll();
+  }
   
   @GetMapping
   public String geoMap(Model model) {

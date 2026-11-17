@@ -9,13 +9,12 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpTimeoutException;
 import java.time.Duration;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import tools.jackson.databind.JsonNode;
+import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 /** 
@@ -30,7 +29,7 @@ public class LocalidadeService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(LocalidadeService.class);
 
-  private final Map<Integer, String> cache = new ConcurrentHashMap<>();
+  private Map<Integer, String> cache;
 
   public LocalidadeService() {
     initCache();
@@ -59,13 +58,7 @@ public class LocalidadeService {
 
       HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-      JsonNode root = mapper.readTree(response.body());
-
-      if (!root.isArray() || root.isEmpty()) {
-        throw new RuntimeException("Nenhum dado encontrado");
-      }
-
-      root.forEachEntry((s,n) -> cache.put(n.get("id").asInt(), n.get("descricao").asString()));
+      cache = mapper.readValue(response.body(), new TypeReference<Map<Integer, String>>() {});
 
     } catch (HttpTimeoutException e) {
       LOGGER.error("Timeout ao acessar API de localidade", e);
