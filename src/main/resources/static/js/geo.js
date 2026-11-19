@@ -233,12 +233,14 @@ async function carregarLocalidades(ibgeId, htmlSelectId) {
   select.innerHTML = '<option value="">Selecione a localidade...</option>';
 
   // Adiciona novas opções
-  Object.entries(localidades).forEach(([id, descricao]) => {
-    const option = document.createElement('option');
-    option.value = id;
-    option.textContent = descricao;
-    select.appendChild(option);
-  });
+  Object.entries(localidades)
+    .sort(([, x], [, y]) => x.localeCompare(y, 'pt-BR'))
+    .forEach(([id, descricao]) => {
+      const option = document.createElement('option');
+      option.value = id;
+      option.textContent = descricao;
+      select.appendChild(option);
+    });
 }
 
 // Função chamada ao clicar no botão search
