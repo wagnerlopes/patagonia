@@ -107,6 +107,12 @@ const map_init = () => {
       observacao: "Alt 735 m"
     },
 	{
+	  nome: "São Paulo",
+	  coords: [ -23.550385,  -46.633956],
+	  descricao: "Marco zero da cidade de São Paulo",
+	  observacao: "Alt 760 m"
+	},
+	{
 	  nome: "Estação Geodésica 1730",
 	  coords: [-23.2446210136, -46.9411063039],
 	  descricao: "Jundiaí - Serra do Japi",
