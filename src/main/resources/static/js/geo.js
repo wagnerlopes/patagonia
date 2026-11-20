@@ -100,17 +100,29 @@ const map_init = () => {
 	  descricao: "Capital Federal",
 	  observacao: "Alt 1.100 m"
 	},
-    {
-      nome: "Itupeva",
-      coords: [-23.166864,  -47.061320],
-      descricao: "Cidade da Rota das Frutas",
-      observacao: "Alt 735 m"
-    },
+	{
+	  nome: "São Paulo",
+	  coords: [ -23.550385,  -46.633956],
+	  descricao: "Marco zero da cidade de São Paulo",
+	  observacao: "Alt 760 m"
+	},
+	{
+	  nome: "Itupeva",
+	  coords: [-23.166864,  -47.061320],
+	  descricao: "Cidade da Rota das Frutas",
+	  observacao: "Alt 735 m"
+	},
 	{
 	  nome: "Estação Geodésica 1730",
 	  coords: [-23.2446210136, -46.9411063039],
 	  descricao: "Jundiaí - Serra do Japi",
 	  observacao: "SIRGAS2000 - Altitude 1.216 m"
+	},
+	{
+	  nome: "Estação Geodésica 2852Z",
+	  coords: [-22.8511111111, -47.1166666667],
+	  descricao: "Campinas - SP-340",
+	  observacao: "SIRGAS2000 - Altitude 599 m"
 	},
 	{
 	  nome: "Estação Geodésica 2862Z",
@@ -129,13 +141,7 @@ const map_init = () => {
       coords: [-23.1796478483, -47.3030324261],
       descricao: "Salto - Jardim São Gabriel",
       observacao: "SIRGAS2000 - Altitude 558 m"
-    },
-	{
-	  nome: "Estação Geodésica 2852Z",
-	  coords: [-22.8511111111, -47.1166666667],
-	  descricao: "Campinas - SP-340",
-	  observacao: "SIRGAS2000 - Altitude 599 m"
-	}
+    }
   ];
 
   // Centraliza mapa no ponto default
@@ -175,25 +181,27 @@ const map_init = () => {
   // Marcadores padrão e rota entre eles
   const marcadorDF = L.marker(locais_array[0].coords).bindPopup("<b>" + locais_array[0].nome + "</b><br>" + locais_array[0].descricao + "</b><br>" + locais_array[0].observacao);
   const marcadorSP = L.marker(locais_array[1].coords).bindPopup("<b>" + locais_array[1].nome + "</b><br>" + locais_array[1].descricao + "</b><br>" + locais_array[1].observacao);
+  const marcadorIT = L.marker(locais_array[2].coords).bindPopup("<b>" + locais_array[2].nome + "</b><br>" + locais_array[2].descricao + "</b><br>" + locais_array[2].observacao);
   var distanciaMetros = map.distance(locais_array[0].coords, locais_array[1].coords);
   var distanciaKm = (distanciaMetros / 1000).toFixed(1);
 
   const rota = L.polyline([marcadorDF.getLatLng(), marcadorSP.getLatLng()], {color: 'red'}).bindPopup("Rota Brasília → Itupeva " + distanciaKm + " Km");
   
   // Adiciona marcadores padrão ao mapa
+  marcadorIT.addTo(map);
   marcadorDF.addTo(map);
   marcadorSP.addTo(map);
   rota.addTo(map);
 
   // Adiciona estações geodésicas e suas informações
-  locais_array.slice(2).forEach(function(local) {
+  locais_array.slice(3).forEach(function(local) {
     L.marker(local.coords)
      .addTo(layerEstacoes)
      .bindPopup("<b>" + local.nome + "</b><br>" + local.descricao + "</b><br>" + local.observacao);
   });
 
   // Raio de 1km do local padrão
-  const circulo = L.circle(marcadorSP.getLatLng(), {
+  const circulo = L.circle(marcadorIT.getLatLng(), {
       radius: 1000,
       color: 'red',
       fillColor: '#f03',
@@ -203,7 +211,8 @@ const map_init = () => {
   // Controle lateral de pontos
   const overlayMaps = {
 	"Brasília": marcadorDF,
-    "Itupeva": marcadorSP,
+	"São Paulo": marcadorSP,
+	"Itupeva": marcadorIT,
     "Rota Brasília-Itupeva": rota,
 	"Estações Geodésicas": layerEstacoes,
     "Raio de 1 Km": circulo
