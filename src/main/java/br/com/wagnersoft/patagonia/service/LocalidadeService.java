@@ -20,8 +20,8 @@ import tools.jackson.databind.ObjectMapper;
 /** 
  * LocalidadeService.
  * 
- * @since 0.0.1
- * @version 0.0.1
+ * @since 1.0.0
+ * @version 0.1.0
  * @author Wagner Lopes
  */
 @Service
@@ -33,7 +33,7 @@ public class LocalidadeService {
 
   public LocalidadeService() {
     initCache();
-    LOGGER.info("Cache iniciado");
+    LOGGER.info("Cache de localidades: {}", cache.size());
   }
 
   public void initCache() {
@@ -58,7 +58,7 @@ public class LocalidadeService {
 
       HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-      cache = mapper.readValue(response.body(), new TypeReference<Map<Integer, String>>() {});
+      cache = mapper.readValue(response.body(), new TypeReference<Map<Integer, String>>() { });
 
     } catch (HttpTimeoutException e) {
       LOGGER.error("Timeout ao acessar API de localidade", e);
