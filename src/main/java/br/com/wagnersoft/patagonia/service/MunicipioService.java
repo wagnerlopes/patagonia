@@ -22,8 +22,8 @@ import tools.jackson.databind.ObjectMapper;
 /** 
  * MunicipioService.
  * 
- * @since 0.0.1
- * @version 0.0.1
+ * @since 1.0.0
+ * @version 0.1.0
  * @author Wagner Lopes
  */
 @Service
@@ -40,16 +40,18 @@ public class MunicipioService {
     ObjectMapper mapper = new ObjectMapper();
 
     try {
-      
+
       ClassPathResource resource = new ClassPathResource("municipios.json");
 
-      this.municipios = Collections.unmodifiableList(mapper.readValue(resource.getFile(), new TypeReference<List<Municipio>>() {}));
+      this.municipios = Collections.unmodifiableList(mapper.readValue(resource.getFile(), new TypeReference<List<Municipio>>() { }));
       this.municipiosPorId = municipios.stream().collect(Collectors.toMap(Municipio::getId, Function.identity()));
 
       // Verifica municípios incompletos
       municipios.stream().filter(m -> m.getMicrorregiao() == null).forEach(System.out::println);
-      
+
       LOGGER.info("Total de municípios: {}", municipios.size());
+
+      LOGGER.info("Cache de municipios: {}", municipiosPorId.size());
 
     } catch (JacksonException | IOException e) {
       throw new RuntimeException(e);
@@ -68,11 +70,11 @@ public class MunicipioService {
 
   private String formatarNomeMunicipio(Municipio municipio) {
     return municipio.getNome() + " - " + municipio.getMicrorregiao()
-                                                  .getMesorregiao()
-                                                  .getUf()
-                                                  .getSigla();
+    .getMesorregiao()
+    .getUf()
+    .getSigla();
   }
-  
+
   public Municipio findById(Long id) {
     return municipiosPorId.get(id);
   }
