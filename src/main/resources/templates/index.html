@@ -5,60 +5,152 @@
 <head th:fragment = "meta">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Cleint for Map Api" />
+  <meta name="description" content="Portal GIS de localides brasileiras" />
   <meta name="author" content="Wagnersoft - WL"/>
   <meta name="generator" content="Astro v5.13.2" />
   <meta name="theme-color" content="#712cf9" />
 
-  <title>Patagonia · WagnerSoft v0.0.1-alpha</title>
+  <title>Patagônia · WagnerSoft</title>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"> 
   <link rel="stylesheet" type="text/css" media="all" href="../css/patagonia.css" th:href="@{/css/patagonia.css}"/>
 
 </head>
 
-<body class="m-5">
+<body id="municipios">
 
-  <header class="border-bottom mb-1 pb-1">
-   <div class="container d-flex flex-wrap justify-content-center">
-    <h2>Brasil GeoInformação</h2>
-    <i class="bi bi-globe-americas"></i>
-   </div>
-  </header>
-    
-  <div class="card shadow-sm border-0 mb-1 pb-1">
+<header class="patagonia-header shadow-lg my-1">
 
-    <div class="card-body">
+    <div class="container-fluid py-3">
 
-      <h5 class="card-title mb-3">Consulta de Município</h5>
+        <div class="d-flex align-items-center justify-content-between mb-3">
 
-      <form th:action="@{/municipio}" method="get" class="d-inline">
-        
-        <div class="row g-2 align-items-end">
+            <!-- Logo / Sistema -->
+            <div class="d-flex align-items-center">
 
-          <div class="col-md-5">
-            <select id="municipio" name="id" class="form-select">
-              <option value="">Selecione um município...</option>
-              <option th:each="m : ${allMunicipios}" th:value="${m.key}" th:text="${m.value}"></option>
-            </select>
-          </div>
+                <div class="logo-box me-3">
+                  <i class="bi bi-map text-white fs-3 lh-1"></i>
+                </div>
 
-          <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Pesquisar</button>
-          </div>
+                <div>
+                    <h1 class="h4 mb-0 fw-bold text-white">
+                        Patagônia
+                    </h1>
 
-          <div class="col-md-2">
-            <a th:href="@{/geomap}">Acesse o Mapa Geográfico</a>
-          </div>
-                
+                    <small class="text-white-50">
+                        Sistema de Informações Municipais • WagnerSoft
+                    </small>
+                </div>
+
+            </div>
+
+            <!-- Ações -->
+            <div class="d-flex align-items-center gap-2">
+
+                <button type="button"
+                        class="btn btn-light"
+                        data-bs-toggle="tooltip"
+                        title="Favoritos">
+                    <i class="bi bi-star"></i>
+                </button>
+
+                <button type="button"
+                        class="btn btn-light"
+                        data-bs-toggle="tooltip"
+                        title="Tema escuro">
+                    <i class="bi bi-moon"></i>
+                </button>
+
+                <button type="button" class="btn btn-outline-light">
+                    <i class="bi bi-person-circle me-1"></i>
+                    Usuário
+                </button>
+
+            </div>
+
         </div>
-            
-      </form>
-        
+
+        <!-- Formulário -->
+        <form th:action="@{/municipio}" method="get">
+
+            <div class="row g-2 align-items-end">
+
+                <!-- Município -->
+                <div class="col-lg-9">
+
+                    <label for="municipio" class="form-label text-white fw-semibold">
+                        Município
+                    </label>
+
+                    <select id="municipio" name="id" class="form-select form-select-lg">
+                        <option value="">Selecione um município...</option>
+                        <option th:each="m : ${allMunicipios}" th:value="${m.key}" th:text="${m.value}"></option>
+                    </select>
+
+                </div>
+
+                <!-- Botão -->
+                <div class="col-lg-3">
+
+                    <button type="submit" class="btn btn-success btn-lg w-100">
+                        <i class="bi bi-search me-2"></i>
+                        Consultar
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
     </div>
 
-  </div>
-   
+    <!-- Menu -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-patagonia">
+
+        <div class="container-fluid">
+
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#menuPatagonia">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+            <div class="collapse navbar-collapse" id="menuPatagonia">
+
+                <ul class="navbar-nav">
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#municipios">Municípios</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#indicadores">Indicadores</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/geomap}">Mapas</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#rodape">Sobre</a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+</header>
+
+<section>
+
   <div th:if="${emsg != null}" class="card shadow-sm border-0 mb-1 pb-1">
 
     <div class="card shadow-sm border-0">
@@ -82,10 +174,10 @@
           <i class="bi bi-geo fs-4 me-1"></i>
           <span th:text="${municipio.nome}"></span>
         </div>
-        <div class="small text-white-50" th:text="${'(Código IBGE ' + municipio.id  + ')'}">3525904</div>
+        <div class="small text-white-50" th:text="${'(Código IBGE ' + municipio.id  + ')'}">3525004</div>
     </div>
 
-    <div class="card-body">
+    <div class="card-body" id="indicadores">
 
         <!-- Destaque principal -->
         <div class="text-center mb-4">
@@ -186,8 +278,10 @@
 
   </div>
 
-  <footer class="border-top">
-     <p class="text-center text-body-secondary"> &copy; 2026 WagnerSoft IT Solutions.<br/>v0.0.1-alpha</p>
+</section>
+
+  <footer id="rodape">
+     <p class="text-center text-body-secondary"> &copy; 2026 WagnerSoft IT Solutions.<br/>v0.1.0-ALPHA</p>
   </footer>
 
   <script src="../js/index.js" th:src="@{/js/index.js}" ></script>
