@@ -87,26 +87,28 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: spotbugs
-          path: target/site/spotbugs.html
+          path: target/spotbugs.html
           if-no-files-found: ignore
 
   deployment:
     runs-on: ubuntu-latest
 
     permissions:
+      contents: read
       pages: write
-      id-token: write 
-
+      id-token: write
+    
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     needs: [test, javadocs, checkstyle, spotbugs]
-    
+
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
-
+      - uses: actions/checkout@v4
+    
       - uses: actions/download-artifact@v4
         with:
           name: jacoco
@@ -130,7 +132,7 @@ jobs:
           name: spotbugs
           path: quality
         continue-on-error: true
-        
+
       - name: Obter versão do Maven
         id: version
         run: |
@@ -140,16 +142,16 @@ jobs:
 
       - name: Create index.html
         run: |
-          cat <<'EOF' > quality/index.html
+          cat <<EOF > quality/index.html
           <!DOCTYPE html>
           <html lang="pt-BR">
           <head>
             <meta charset="UTF-8">
-            <title>Pprojeto Patagônia</title>
+            <title>Projeto Babilônia</title>
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
           </head>
           <body class="m-5">
-            <h1>Portal de Qualidade do Projeto Patagônia</h1>
+            <h1>Portal de Qualidade do Projeto Babilônia</h1>
             <hr>
             <p><strong>Versão:</strong> ${VERSION}</p>
             <p><strong>Build:</strong> ${BUILD_DATE}</p>
