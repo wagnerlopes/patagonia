@@ -79,7 +79,7 @@ window.onload = function() {
   map.on('locationfound', function(e) {
       L.marker(e.latlng)
           .addTo(map)
-          .bindPopup('Você está aqui!')
+          .bindPopup('Local atual aproximado')
           .openPopup();
   });
 
@@ -185,7 +185,7 @@ const map_init = () => {
   var distanciaMetros = map.distance(locais_array[0].coords, locais_array[1].coords);
   var distanciaKm = (distanciaMetros / 1000).toFixed(1);
 
-  const rota = L.polyline([marcadorDF.getLatLng(), marcadorSP.getLatLng()], {color: 'red'}).bindPopup("Rota Brasília → Itupeva " + distanciaKm + " Km");
+  const rota = L.polyline([marcadorDF.getLatLng(), marcadorSP.getLatLng()], {color: 'red'}).bindPopup("Rota Brasília → São Paulo" + distanciaKm + " Km");
   
   // Adiciona marcadores padrão ao mapa
   marcadorIT.addTo(map);
