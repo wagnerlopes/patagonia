@@ -6,13 +6,24 @@ function init(){
   // Configura Botão tema claro/escuro 	
   initButtonTheme()
   
-  // Inicializa gráficos quando tem id
+  // Configura Botão de usuário 	
+  initUserLog()
+
+    // Inicializa gráficos quando tem id
   const id = new URLSearchParams(window.location.search).get("id");
   const municipioValido = id && /^\d+$/.test(id); // existe id e id é numérico
   if (municipioValido) {
     initCharts(id);
   }
 
+}
+
+// Inicializa botão de usuário
+function initUserLog() {
+  console.log('Init userLog');
+  document.getElementById('userLog').addEventListener('click', () => {
+	alert('Olá usuário!');
+  });
 }
 
 // Inicializa botão de tema claro/escuro
