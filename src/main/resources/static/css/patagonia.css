@@ -206,3 +206,25 @@
 .patagonia-header .btn-success {
     border-radius: 12px;
 }
+
+[data-bs-theme="light"] .patagonia-header {
+    background:
+        linear-gradient(
+            135deg,
+            #1e3a8a,
+            #2563eb,
+            #0891b2,
+            #059669
+        );
+}
+
+[data-bs-theme="dark"] .patagonia-header {
+    background:
+        linear-gradient(
+            135deg,
+            #0f172a,
+            #1e293b,
+            #1f2937,
+            #111827
+        );
+}

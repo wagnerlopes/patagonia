@@ -64,8 +64,32 @@ document.addEventListener('DOMContentLoaded', () => {
   
   getPopulacaoAll(munId, popChart);
   getPibAll(munId, pibChart);
+
+  // Alterar Tema
+  const html = document.documentElement;
+  const button = document.getElementById('themeToggle');
+  const icon = document.getElementById('themeIcon');
   
+  localStorage.setItem('theme', html.getAttribute('data-bs-theme'));
+
+  button.addEventListener('click', () => {
+
+      const current = html.getAttribute('data-bs-theme') || 'light';
+
+      const next = current === 'dark' ? 'light' : 'dark';
+
+      html.setAttribute('data-bs-theme', next);
+
+	  localStorage.setItem('theme', next);
+      updateIcon(icon);
+  });
+    
 });
+
+function updateIcon(icon) {
+  const theme = document.documentElement.getAttribute('data-bs-theme');
+  icon.className = theme === 'dark' ? 'bi bi-sun' : 'bi bi-moon';
+}
 
 // Chamada API SIGRA IBGE - Série População do Município
 async function getPopulacaoAll(munId, chart) {
