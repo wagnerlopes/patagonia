@@ -2,13 +2,13 @@
 
 <html lang="en" data-bs-theme="light" xmlns:th="http://www.thymeleaf.org">
 
-<head th:fragment = "meta">
+<head>
+
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Portal GIS de localides brasileiras" />
   <meta name="author" content="Wagnersoft - WL"/>
-  <meta name="generator" content="Astro v5.13.2" />
-  <meta name="theme-color" content="#712cf9" />
+  <meta name="theme-color" content="#1e3a8a" />
 
   <title>Patagônia · WagnerSoft</title>
 
@@ -57,22 +57,22 @@
 
                 <button type="button"
                         class="btn btn-light"
-                        data-bs-theme-value="dark"
-                        data-bs-toggle="tooltip"
-                        title="Favoritos"
-                        aria-pressed="false">
+                        id="favoritos"
+                        title="Favoritos">
                     <i class="bi bi-star"></i>
                 </button>
 
                 <button type="button"
                         class="btn btn-light"
-                        data-bs-toggle="tooltip"
                         id="themeToggle"
-                        title="Tema escuro">
+                        title="Alterar tema claro/escuro">
                     <i id="themeIcon" class="bi bi-moon"></i>
                 </button>
 
-                <button type="button" class="btn btn-outline-light">
+                <button type="button"
+                        class="btn btn-outline-light"
+                        id="userLog"
+                        title="Usuário atual">
                     <i class="bi bi-person-circle me-1"></i>
                     Usuário
                 </button>
@@ -292,7 +292,7 @@
 </section>
 
   <footer id="rodape">
-     <p class="text-center text-body-secondary"> &copy; 2026 WagnerSoft IT Solutions.<br/>v0.1.0-ALPHA</p>
+     <p class="text-center text-body-secondary"> &copy; 2026 WagnerSoft IT Solutions.<br/>v0.2.0-ALPHA</p>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script> 

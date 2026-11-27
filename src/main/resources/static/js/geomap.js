@@ -4,54 +4,90 @@
  * - Chama info na API remota 
  ******************************/
 
-let map;
-let layerLocais;
+const App = {
+  map: null,
+  layerLocais: null,
+  layerEstacoes: null
+};
 
-window.addEventListener('load', () => map = map_init());
+document.addEventListener('DOMContentLoaded', init);
 
-// Associa eventos após carregar a janela
-window.onload = function() {
+function init() {
+  initMap();
 
-  document.getElementById('munOri').addEventListener('change', (e) => {
-	const id = e.target.value;
-	carregarLocalidades(id, 'origemId');
-  });
-  		
-  document.getElementById('origemId').addEventListener('change', (e) => {
-	const id = e.target.value;
-    console.log("Origem (ID) = " + id);
-	carregarLocal(id, map);
-  });
-
-  document.getElementById('munDes').addEventListener('change', (e) => {
-    const id = e.target.value;
-    carregarLocalidades(id, 'destinoId');
-  });
-
-  document.getElementById('destinoId').addEventListener('change', (e) => {
-    const id = e.target.value;
-    console.log("Destino (ID) = " + id);
-    carregarLocal(id, map);
-  });
+  if (!(App.map instanceof L.Map)) {
+      throw new Error('Falha ao inicializar o mapa');
+  }
     
-  document.getElementById('btCalc').addEventListener('click', (e) => {
-    calcularDistancia(map);
-  });
+  bindEvents();
+}
 
-  document.getElementById('btLimpar').addEventListener('click', (e) => {
-    layerLocais.clearLayers();
-	document.getElementById("lat1").value = "";
-	document.getElementById("lon1").value = "";
-	document.getElementById("lat2").value = "";
-	document.getElementById("lon2").value = "";
-  });
+// Inicializar eventos
+function bindEvents() {
 
-  document.getElementById('btCalcDist').addEventListener('click', (e) => {
-    calcularDistanciaLocal(map);
-  });
-  	
+  const munOri = document.getElementById('munOri');
+  if (munOri) {
+    munOri.addEventListener('change', (e) => {
+	  const id = e.target.value;
+	  carregarLocalidades(id, 'origemId');
+    });
+  }
+  
+  const origemId = document.getElementById('origemId');
+  if (origemId) {
+    origemId.addEventListener('change', (e) => {
+	  const id = e.target.value;
+      console.log("Origem (ID) = " + id);
+	  carregarLocal(id);
+    });
+  }
+  
+  const munDes = document.getElementById('munDes');
+  if (munDes) {
+    munDes.addEventListener('change', (e) => {
+      const id = e.target.value;
+      carregarLocalidades(id, 'destinoId');
+    });
+  }
+  
+  const destinoId = document.getElementById('destinoId');
+  if (destinoId) {
+    destinoId.addEventListener('change', (e) => {
+      const id = e.target.value;
+      console.log("Destino (ID) = " + id);
+      carregarLocal(id);
+    });
+  }
+  
+  const btCalc = document.getElementById('btCalc');
+  if (btCalc) {
+    btCalc.addEventListener('click', (e) => {
+      calcularDistancia();
+    });
+  }
+  
+  const btLimpar = document.getElementById('btLimpar');
+  if (btLimpar) {
+    btLimpar.addEventListener('click', (e) => {
+	  if (App.layerLocais) {
+        App.layerLocais.clearLayers();
+	  }
+	  document.getElementById("lat1").value = "";
+	  document.getElementById("lon1").value = "";
+	  document.getElementById("lat2").value = "";
+	  document.getElementById("lon2").value = "";
+    });
+  }
+
+  const btCalcDist = document.getElementById('btCalcDist');
+  if (btCalcDist) {
+    document.getElementById('btCalcDist').addEventListener('click', (e) => {
+      calcularDistanciaLocal();
+    });
+  }
+	
   // adiciona evento de clique no mapa
-  map.on('click', function(e) {
+  App.map.on('click', function(e) {
     const lat = e.latlng.lat;
     const lng = e.latlng.lng;
 
@@ -69,28 +105,28 @@ window.onload = function() {
     // Cria marcador no ponto clicado
     L.marker([lat, lng])
       .bindPopup(`Coordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`)
-      .addTo(layerLocais)
+      .addTo(App.layerLocais)
       .openPopup();
   });
 
   // Obtendo localização aproximada pelo navegador
-  map.locate({setView: true, maxZoom: 16});
+  App.map.locate({setView: true, maxZoom: 16});
 
-  map.on('locationfound', function(e) {
+  App.map.on('locationfound', function(e) {
       L.marker(e.latlng)
-          .addTo(map)
-          .bindPopup('Local atual aproximado')
-          .openPopup();
+       .addTo(App.map)
+       .bindPopup('Local atual aproximado')
+       .openPopup();
   });
 
-  map.on('locationerror', function(e) {
+  App.map.on('locationerror', function(e) {
       alert(e.message);
   });
 
 }
 
 // Inicializa o Mapa
-const map_init = () => {
+function initMap() {
 	
   // Lista de locais padrão
   const locais_array = [
@@ -145,11 +181,11 @@ const map_init = () => {
   ];
 
   // Centraliza mapa no ponto default
-  const map = L.map('map').setView(locais_array[1].coords, 10);
+  App.map = L.map('map').setView(locais_array[1].coords, 10);
 
   // Cria grupo de camadas de pontos relevantes
-  layerEstacoes = L.layerGroup().addTo(map);
-  layerLocais = L.layerGroup().addTo(map);
+  App.layerEstacoes = L.layerGroup().addTo(App.map);
+  App.layerLocais = L.layerGroup().addTo(App.map);
   
   // Cria as camadas de tiles do mapa
   const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -176,27 +212,27 @@ const map_init = () => {
   };
   
   // Adiciona camada padrão (OSM)
-  osm.addTo(map);
+  osm.addTo(App.map);
 
   // Marcadores padrão e rota entre eles
   const marcadorDF = L.marker(locais_array[0].coords).bindPopup("<b>" + locais_array[0].nome + "</b><br>" + locais_array[0].descricao + "</b><br>" + locais_array[0].observacao);
   const marcadorSP = L.marker(locais_array[1].coords).bindPopup("<b>" + locais_array[1].nome + "</b><br>" + locais_array[1].descricao + "</b><br>" + locais_array[1].observacao);
   const marcadorIT = L.marker(locais_array[2].coords).bindPopup("<b>" + locais_array[2].nome + "</b><br>" + locais_array[2].descricao + "</b><br>" + locais_array[2].observacao);
-  var distanciaMetros = map.distance(locais_array[0].coords, locais_array[1].coords);
+  var distanciaMetros = App.map.distance(locais_array[0].coords, locais_array[1].coords);
   var distanciaKm = (distanciaMetros / 1000).toFixed(1);
 
-  const rota = L.polyline([marcadorDF.getLatLng(), marcadorSP.getLatLng()], {color: 'red'}).bindPopup("Rota Brasília → São Paulo" + distanciaKm + " Km");
+  const rota = L.polyline([marcadorDF.getLatLng(), marcadorSP.getLatLng()], {color: 'red'}).bindPopup(`Rota Brasília → São Paulo<br>Distância: ${distanciaKm} Km`);
   
   // Adiciona marcadores padrão ao mapa
-  marcadorIT.addTo(map);
-  marcadorDF.addTo(map);
-  marcadorSP.addTo(map);
-  rota.addTo(map);
+  marcadorIT.addTo(App.map);
+  marcadorDF.addTo(App.map);
+  marcadorSP.addTo(App.map);
+  rota.addTo(App.map);
 
   // Adiciona estações geodésicas e suas informações
   locais_array.slice(3).forEach(function(local) {
     L.marker(local.coords)
-     .addTo(layerEstacoes)
+     .addTo(App.layerEstacoes)
      .bindPopup("<b>" + local.nome + "</b><br>" + local.descricao + "</b><br>" + local.observacao);
   });
 
@@ -206,29 +242,28 @@ const map_init = () => {
       color: 'red',
       fillColor: '#f03',
       fillOpacity: 0.5
-  }).addTo(map);
+  }).addTo(App.map);
     
   // Controle lateral de pontos
   const overlayMaps = {
 	"Brasília": marcadorDF,
 	"São Paulo": marcadorSP,
 	"Itupeva": marcadorIT,
-    "Rota Brasília-Itupeva": rota,
-	"Estações Geodésicas": layerEstacoes,
+    "Rota Brasília-São Paulo": rota,
+	"Estações Geodésicas": App.layerEstacoes,
     "Raio de 1 Km": circulo
   };
 
-  L.control.layers(baseMaps, overlayMaps).addTo(map);
+  L.control.layers(baseMaps, overlayMaps).addTo(App.map);
 
   // Adiciona escala gráfica ao mapa
   L.control.scale({
     position: 'bottomleft', // opções: 'topleft', 'topright', 'bottomleft', 'bottomright'
     imperial: false,        // desativa milhas/pés
     metric: true            // ativa metros/km
-  }).addTo(map);
+  }).addTo(App.map);
 
-  return map;
-};
+}
 
 
 // Função chamada ao selecionar municipio de origem ou destino
@@ -253,22 +288,22 @@ async function carregarLocalidades(ibgeId, htmlSelectId) {
 }
 
 // Função chamada ao clicar no botão search
-async function carregarLocal(id, map) {
+async function carregarLocal(id) {
   const local = await buscarLocal(id);
   console.log(local);
   if (local) {
     // Centraliza no ponto
-    map.flyTo(local.coords, 10);
+    App.map.flyTo(local.coords, 10);
 
     // Adiciona marcador
     L.marker(local.coords)
-      .addTo(layerLocais)
+      .addTo(App.layerLocais)
       .bindPopup(`<b>Localidade: ${local.nome}</b><br>Município: ${local.municipio} - ${local.uf} (${local.munIbgeId})<br>Distrito: ${local.distrito}<br>Microrregião: ${local.microrregiao}<br>Mesorregião: ${local.mesorregiao}`);
   }
 }
 
 // Função chamada ao clicar no botão distancia
-async function calcularDistancia(map) {
+async function calcularDistancia() {
     const origemId = document.getElementById("origemId").value;
     const destinoId = document.getElementById("destinoId").value;
 	const origem = await buscarLocal(origemId);
@@ -278,14 +313,14 @@ async function calcularDistancia(map) {
 		console.log("Distância = ", data);
         const info = `<ul><li>Origem: ${data.origem}<li>Destino: ${data.destino}<li>Distância: ${data.distancia.toLocaleString('pt-BR')} ${data.unidade}`
 		const rota = L.polyline([origem.coords, destino.coords], {color: 'red'}).bindPopup(info);
-		rota.addTo(layerLocais);
-		map.fitBounds(rota.getBounds());
+		rota.addTo(App.layerLocais);
+		App.map.fitBounds(rota.getBounds());
 		rota.openPopup();
   }
 }
 
 // Função chamada ao clicar btCalcDist (entre pontos clicados)
-async function calcularDistanciaLocal(map) {
+async function calcularDistanciaLocal() {
 	const lat1 = document.getElementById("lat1").value;
 	const lon1 = document.getElementById("lon1").value;
     const lat2 = document.getElementById("lat2").value;
@@ -296,8 +331,8 @@ async function calcularDistanciaLocal(map) {
 		const azv = Number.isNaN(data.azv) ? "Valor inválido" : Number(data.azv).toFixed(1);
 		const azm = Number.isNaN(data.azm) ? "Valor inválido" : Number(data.azm).toFixed(1);
  		const rota = L.polyline([[lat1, lon1], [lat2, lon2]], {color: 'red'}).bindPopup(`<ul><li>Distância: ${(data.distancia/1000).toFixed(1)} Km<li>AzV: ${azv}°<li>AzM:${azm}°</ul>`);
-		rota.addTo(layerLocais);
-		map.fitBounds(rota.getBounds());
+		rota.addTo(App.layerLocais);
+		App.map.fitBounds(rota.getBounds());
 		rota.openPopup();
   }
 }

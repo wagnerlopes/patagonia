@@ -1,12 +1,47 @@
+document.addEventListener('DOMContentLoaded', init);
+
 // Eventos adicionados ao carregar a pagina
-document.addEventListener('DOMContentLoaded', () => {
-
-  'use strict'
-
-  // Obter ID da URL
-  const id = new URLSearchParams(window.location.search).get("id");
-  const munId = id && /^\d+$/.test(id) ? id : "3524006";
+function init(){
+	
+  // Configura Botão tema claro/escuro 	
+  initButtonTheme()
   
+  // Configura Botão de usuário 	
+  initUserLog()
+
+    // Inicializa gráficos quando tem id
+  const id = new URLSearchParams(window.location.search).get("id");
+  const municipioValido = id && /^\d+$/.test(id); // existe id e id é numérico
+  if (municipioValido) {
+    initCharts(id);
+  }
+
+}
+
+// Inicializa botão de usuário
+function initUserLog() {
+  console.log('Init userLog');
+  document.getElementById('userLog').addEventListener('click', () => {
+	alert('Olá usuário!');
+  });
+}
+
+// Inicializa botão de tema claro/escuro
+function initButtonTheme() {
+  const html = document.documentElement;
+  localStorage.setItem('theme', html.getAttribute('data-bs-theme'));
+
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const current = html.getAttribute('data-bs-theme') || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-bs-theme', next);
+    localStorage.setItem('theme', next);
+	document.getElementById('themeIcon').className = next === 'dark' ? 'bi bi-sun' : 'bi bi-moon';
+  });
+}
+  
+// Inicializa graficos quando tem id de município válido
+function initCharts(munId) {
   // Placeholder visual
   const popChartHtml = document.getElementById('popChart');
   const pibChartHtml = document.getElementById('pibChart');
@@ -18,8 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const initialData = [0,0,0,0,0,0,0,0,0,0];
 
   const popChart = new Chart(popChartHtml, {
-    type: 'bar',
-    data: { labels: xValues,
+	  type: 'bar',
+	  data: { labels: xValues,
 		    datasets: [{
 				 data: initialData,
 				 backgroundColor: 'rgba(54, 162, 235, 0.7)',
@@ -27,17 +62,17 @@ document.addEventListener('DOMContentLoaded', () => {
 			     borderWidth: 1
 		 	}]
 	},
-    options: {
-      plugins: {
-        legend: { display: false },
-        tooltip: { boxPadding: 3 }
-      }
-    }
+	  options: {
+	    plugins: {
+	      legend: { display: false },
+	      tooltip: { boxPadding: 3 }
+	    }
+	  }
   });
 
   const pibChart = new Chart(pibChartHtml, {
-    type: 'bar',
-    data: { labels: xValues,
+	  type: 'bar',
+	  data: { labels: xValues,
 	        datasets: [{
 				 data: initialData,
 				 backgroundColor: 'rgba(40, 167, 69, 0.7)',
@@ -45,51 +80,27 @@ document.addEventListener('DOMContentLoaded', () => {
 			     borderWidth: 1
 		 	}]
 	},
-    options: {
-      plugins: {
-        legend: { display: false },
-        tooltip: {
+	  options: {
+	    plugins: {
+	      legend: { display: false },
+	      tooltip: {
 	        boxPadding: 3,
 		    callbacks: {
 		    label: function(context) {
-		               return 'R$ ' +
-			                  context.raw.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1}) +
-			                  ' milhões';
+		             return 'R$ ' +
+			                context.raw.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1}) +
+			                ' milhões';
 			       }
 		    }
-        }
-      }
-    }
+	      }
+	    }
+	  }
   });
-  
+
   getPopulacaoAll(munId, popChart);
   getPibAll(munId, pibChart);
-
-  // Alterar Tema
-  const html = document.documentElement;
-  const button = document.getElementById('themeToggle');
-  const icon = document.getElementById('themeIcon');
-  
-  localStorage.setItem('theme', html.getAttribute('data-bs-theme'));
-
-  button.addEventListener('click', () => {
-
-      const current = html.getAttribute('data-bs-theme') || 'light';
-
-      const next = current === 'dark' ? 'light' : 'dark';
-
-      html.setAttribute('data-bs-theme', next);
-
-	  localStorage.setItem('theme', next);
-      updateIcon(icon);
-  });
-    
-});
-
-function updateIcon(icon) {
-  const theme = document.documentElement.getAttribute('data-bs-theme');
-  icon.className = theme === 'dark' ? 'bi bi-sun' : 'bi bi-moon';
 }
+
 
 // Chamada API SIGRA IBGE - Série População do Município
 async function getPopulacaoAll(munId, chart) {
