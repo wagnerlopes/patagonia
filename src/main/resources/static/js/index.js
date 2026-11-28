@@ -3,13 +3,16 @@ document.addEventListener('DOMContentLoaded', init);
 // Eventos adicionados ao carregar a pagina
 function init(){
 	
+  // Configura Botão favoritos
+  initFavoritos();
+
   // Configura Botão tema claro/escuro 	
-  initButtonTheme()
+  initButtonTheme();
   
   // Configura Botão de usuário 	
-  initUserLog()
+  initUserLog();
 
-    // Inicializa gráficos quando tem id
+  // Inicializa gráficos quando tem id
   const id = new URLSearchParams(window.location.search).get("id");
   const municipioValido = id && /^\d+$/.test(id); // existe id e id é numérico
   if (municipioValido) {
@@ -18,9 +21,16 @@ function init(){
 
 }
 
+// Inicializa botão favoritos
+function initFavoritos() {
+  document.getElementById('favoritos').addEventListener('click', () => {
+	document.getElementById('municipio').value = 3524006;
+	document.getElementById('form1').requestSubmit();
+  });
+}
+
 // Inicializa botão de usuário
 function initUserLog() {
-  console.log('Init userLog');
   document.getElementById('userLog').addEventListener('click', () => {
 	alert('Olá usuário!');
   });
